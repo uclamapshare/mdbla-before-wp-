@@ -1,0 +1,57 @@
+body { margin:0; padding:0; }
+#map { position:absolute; top:0; bottom:0; width:100%; }
+
+.legend {
+	background-color: rgba(255,255,255,0.9);
+	/*border-radius: 3px;*/
+	top: 10px;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+	font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	padding: 10px;
+	position: absolute;
+	left: 50px;
+	z-index: 1;
+	width: 300px;
+	height: 500px;
+}
+
+.legend h4 {
+	margin: 0 0 10px;
+}
+
+.legend div span {
+	border-radius: 50%;
+	display: inline-block;
+	height: 10px;
+	margin-right: 5px;
+	width: 10px;
+}
+.legend-title {
+	font-size:2.5em;
+	padding: 10px 0;
+}
+
+.waffle-container {
+	width: 120px;
+	float: left;
+}
+
+.waffle-column {
+	/*width: 15px;*/
+	float: left;
+}
+.waffle-border {
+	border:1px solid transparent;
+	/*float: left;*/
+}
+
+.waffle-box {
+	width:10px;
+	height:10px;
+	background: rgba(49,79,79,0.8);
+}
+.waffle-box-empty {
+	width:10px;
+	height:10px;
+	background: rgba(49,79,79,0.2);
+}
