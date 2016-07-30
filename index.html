@@ -6,58 +6,75 @@
 	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-    <!-- stylesheets -->
+	<!-- stylesheets -->
 	<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
-    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+	<link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
 	<script src="js/vis.js"></script>
 	<link href="css/vis.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/style.css" />
 
 
 </head>
 <body>
 
-<div id='map'></div>
+<div class="container-fluid">
+	<div class="row">
+		<!-- map  -->
+		<div class="col-xs-6">
+			<button type="button" class="btn btn-default btn-sm" id="button-hover" style="">hover</button>
+			<div id='map'></div>
+		</div>
+		<!-- data -->
+		<div class="col-xs-6" id='legend'>
+			<div>
+				<!-- menu items -->
+				<ul class="nav nav-pills nav-justified">
+					<li class="active"><a data-toggle="tab" href="#prison" id="button-prison">Prison Data</a></li>
+					<li><a data-toggle="tab" href="#charges" id="button-charges">Charges</a></li>
+					<li><a data-toggle="tab" href="#timeline" id="button-timeline">Timeline</a></li>
+					<li><a data-toggle="tab" href="#daysinjail" id="button-daysinjail">Days in Jail</a></li>
+				</ul>
 
-	<!-- cartodb -->
-    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
-	<!-- mapbox standalone (no leaflet) -->
-	<script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.standalone.js'></script>
+				<!-- options bar -->
+				<div id="display-options">
+					<button type="button" class="btn btn-default btn-sm active" id="button-neighborhoods">neighborhoods</button>
+					<button type="button" class="btn btn-default btn-sm" id="button-blockgroups">block groups</button>
+				</div>
 
-<div id='legend' class='legend'>
-	<div>
-		<ul class="nav nav-tabs">
-			<li class="active"><a data-toggle="tab" href="#Prison">Prison Data</a></li>
-			<li><a data-toggle="tab" href="#menu1">Charges</a></li>
-			<li><a data-toggle="tab" href="#menu2">Timeline</a></li>
-			<li><a data-toggle="tab" href="#menu3">Duration</a></li>
-		</ul>
-
-		<div class="tab-content">
-			<div id="Prison" style="padding:8px;" class="tab-pane fade in active">
-				<div style="clear:both" id="legend-content-1"></div>
-				<div style="clear:both" id="legend-content-2"></div>
-				<div style="clear:both" id="legend-content-3"></div>
+				<!-- options bar -->
+				<div id="display-geography"></div>
 				
-			</div>
-			<div id="menu1" class="tab-pane fade menu-content">
-				<div style="clear:both" id="legend-content-4"></div>
-			</div>
-			<div id="menu2" class="tab-pane fade menu-content">
-				<div style="clear:both" id="legend-content-5"></div>
-			</div>
-			<div id="menu3" class="tab-pane fade menu-content">
-				<div style="clear:both" id="legend-content-6"></div>
+				<!-- content -->
+				<div class="tab-content">
+					<div id="prison" style="padding:8px;" class="tab-pane fade in active">
+						<div style="clear:both" id="legend-content-1"></div>
+						<div style="clear:both" id="legend-content-2"></div>
+						<div style="clear:both" id="legend-content-3"></div>
+						
+					</div>
+					<div id="charges" class="tab-pane fade menu-content">
+						<div style="clear:both" id="legend-content-4"></div>
+					</div>
+					<div id="timeline" class="tab-pane fade menu-content">
+						<div style="clear:both" id="legend-content-5"></div>
+					</div>
+					<div id="daysinjail" class="tab-pane fade menu-content">
+						<div style="clear:both" id="legend-content-6"></div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<!-- <div id="expand">[ expand ]</div> -->
-	<button type="button" class="btn btn-secondary-outline btn-sm" id="expand">expand</button>
-	<button type="button" class="btn btn-secondary-outline btn-sm" id="hover">hover on</button>
 </div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+<!-- cartodb -->
+<script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+<!-- mapbox standalone (no leaflet) -->
+<script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.standalone.js'></script>
 
 <script src="js/mdbla.js"></script>
 

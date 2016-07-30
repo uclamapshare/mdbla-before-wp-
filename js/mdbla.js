@@ -30,14 +30,42 @@
 		'Block Groups' : 'https://mdbla.carto.com/api/v2/viz/7c32ed80-4eb6-11e6-a745-0e05a8b3e3d7/viz.json',
 		'Neighborhoods' : 'https://mdbla.carto.com/api/v2/viz/6c2a7b6c-5459-11e6-a6cd-0e233c30368f/viz.json'
 	}
-	mdbla.mappedCartoLayer;
+
+	/*
+
+		Colors for charts
+		blue: 	#1F78B4
+		orage: 	#FF7F00
+		green: 	#33A02C
+		purple: #6A3D9A
+		red: 	#E31A1C
+
+	*/
+	mdbla.colorPallete = ['#6A3D9A','#FF7F00','#33A02C','#1F78B4','#E31A1C'];
+
+
+	/*
+
+		Map related settings
+
+	*/
+	mdbla.map;
+	mdbla.layerCarto;
 	mdbla.cartoSubLayer;
 
 	// mapbox token
 	L.mapbox.accessToken = 'pk.eyJ1IjoieW9obWFuIiwiYSI6IkxuRThfNFkifQ.u2xRJMiChx914U7mOZMiZw';
-	// mdbla.map;
-	// initialize map
-	mdbla.map;
+
+	// satellite layer
+	mdbla.layerSatellite = L.mapbox.styleLayer('mapbox://styles/mapbox/satellite-v9',{'zIndex':0})
+
+	// label layer
+	mdbla.layerLabel = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+			subdomains: 'abcd',
+			maxZoom: 19,
+			zIndex: 3
+		})
 
 /***
 
@@ -64,27 +92,47 @@ $( function()
 	// adjust windows
 	mdbla.resize()
 
-	mdbla.map = new L.Map('map',{
-		center:[34,-118.3], 
-		zoom: 10
-	});	
+	mdbla.map = new L.Map('map');
+	mdbla.layerSatellite.addTo(mdbla.map)
+	// add layer control
+	mdbla.layerControl = L.control.layers(null,{"Satellite":mdbla.layerSatellite,"Labels":mdbla.layerLabel}).addTo(mdbla.map)
 
+	// create real-time css for color pallete
+	$("<style>")
+	.prop("type", "text/css")
+	.html(".vis-item.vis-dot.color1{border-color:"+mdbla.colorPallete[0]+";}")
+	.append(".vis-item.vis-dot.color2{border-color:"+mdbla.colorPallete[1]+";}")
+	.append(".vis-item.vis-dot.color3{border-color:"+mdbla.colorPallete[2]+";}")
+	.append(".vis-item.vis-dot.color4{border-color:"+mdbla.colorPallete[3]+";}")
+	.appendTo("head");
 
 	// activate tooltips
 	$('[data-toggle="tooltip"]').tooltip()
 
 	// go get the data
 	mdbla.cartoSQL();
-	
+
 	// click functions
+	mdbla.clickFunctions();
+	
+});
+
+/***
+
+	Assign buttons to perform various functions
+
+***/
+mdbla.clickFunctions = function()
+{
 	$('#button-neighborhoods').click(function(){ mdbla.toggleGeography() })
 	$('#button-blockgroups').click(function(){ mdbla.toggleGeography() })
 	$('#button-prison').click(function(){ mdbla.activeTab = 'prison'; mdbla.displayPrisonData() })
 	$('#button-charges').click(function(){ mdbla.activeTab = 'charges'; mdbla.displayCharges() })
 	$('#button-timeline').click(function(){ mdbla.activeTab = 'timeline'; mdbla.displayTimeline() })
 	$('#button-daysinjail').click(function(){ mdbla.activeTab = 'daysinjail'; mdbla.displayDaysInJailChart() })
-	$('#hover').click(function(){ toggleHover() })
-});
+	$('#hover').click(function(){ mdbla.toggleHover() })
+
+}
 
 /***
 
@@ -115,20 +163,37 @@ mdbla.toggleHover = function()
 ***/
 mdbla.toggleGeography = function()
 {
+	// reset the map
+	// mdbla.map.remove();
+	mdbla.cartoSubLayer.hide()
+	// mdbla.map = new L.Map('map');
+	// mdbla.layerSatellite.addTo(mdbla.map)
+
+	mdbla.allowHover = true;
+
+	// reset the tabs
+	$('#legend-content-1').empty();
+	$('#legend-content-2').empty();
+	$('#legend-content-3').empty();
+	$('#legend-content-4').empty();
+	$('#legend-content-5').empty();
+	$('#legend-content-6').empty();
+
 	if(mdbla.geography == 'Neighborhoods')
 	{
 		mdbla.geography = 'Block Groups';
-		mdbla.cartoSQL();
 		$('#button-neighborhoods').toggleClass('active');
 		$('#button-blockgroups').toggleClass('active');
 	}
 	else
 	{
 		mdbla.geography = 'Neighborhoods';
-		mdbla.cartoSQL();
 		$('#button-blockgroups').toggleClass('active');
 		$('#button-neighborhoods').toggleClass('active');
 	}
+
+	// add the layer control back to the map
+	mdbla.cartoSQL();
 }
 
 /***
@@ -144,7 +209,12 @@ mdbla.cartoSQL = function(sql)
 	var sql_statement1 = 'SELECT MAX(_jaildays) as jailmax,MIN(_jaildays) as jailmin,MAX(_bookings) as bookingsmax,MIN(_bookings) as bookingsmin,AVG(_jaildays) as "jailavg",AVG(_bookings) as "bookingsavg",AVG(_cost) as "cost" FROM '+mdbla.cartoLayerTable[mdbla.geography]+'';
 
 	// main data sql
-	var sql_statement2 = 'SELECT fips,_bookings,_jaildays FROM '+mdbla.cartoLayerTable[mdbla.geography]+' ORDER BY _jaildays ';
+	var sql_statement2 = 'SELECT name,fips,_bookings,_jaildays FROM '+mdbla.cartoLayerTable[mdbla.geography]+' ORDER BY _jaildays ';
+
+	// get geojson for each polygon
+	// WARNING: may take time
+	var sql_statement3 = 'SELECT * FROM '+mdbla.cartoLayerTable[mdbla.geography];
+	
 
 	// go fetch 'em
 	var sql1 = $.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement1+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
@@ -155,10 +225,18 @@ mdbla.cartoSQL = function(sql)
 	var sql2 = sql1.then(function(){
 		$.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement2+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
 			mdbla.data = data;
+			// we got the data, let's populate the dropdown-neighborhood
+			mdbla.createNeighborhoodDropdown();
+		});
+	})
+	.then(function(){
+		$.getJSON('https://mdbla.carto.com/api/v2/sql/?format=GeoJSON&q='+sql_statement3+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
+		mdbla.geojson = data.features;
+	}).then(function(){
 			// data is got. now create the rankings and start the mapping
 			mdbla.createRankings();
 			mdbla.setMap();
-		});
+		})
 	})
 }
 
@@ -183,19 +261,39 @@ mdbla.setMap = function()
 	]);
 
 	// Use styleLayer to add a Mapbox style created in Mapbox Studio
-	// L.mapbox.styleLayer('mapbox://styles/mapbox/dark-v9').addTo(map);
-	mdbla.mappedCartoLayer = cartodb.createLayer(mdbla.map, mdbla.cartoLayerMap[mdbla.geography],{legends:false})
+	
+	// .addTo(mdbla.map);
+
+	mdbla.layerCarto = cartodb.createLayer(mdbla.map, mdbla.cartoLayerMap[mdbla.geography],{legends:false,zIndex:2})
 		.addTo(mdbla.map)
 		.on('done',function(layer){
+	
+
+			// // add search box
+			// var v = cdb.vis.Overlay.create('search', mdbla.map.viz, {})
+   //          v.show();
+   //          $('#map').append(v.render().el);
+   			mdbla.cartoLayers = layer;
 			mdbla.cartoSubLayer = layer.getSubLayer(0);
 
 			layer.on('featureClick',function(e, pos, latlng, data){
+
+				// turn off the hovering and add a button to allow it back
 				mdbla.allowHover = false;
-				mdbla.highlightPolygon(data.fips);
-				// mdbla.displayPrisonData(data);
+				$('#button-hover').show();
+				$('#button-hover').html('Release '+data.name).click(function(){mdbla.allowHover = true; $('#button-hover').hide()})
+
+				// highlight the polygon
+				mdbla.highlightPolygon(data.fips,true);
+
+				// let the app know what happened
 				mdbla.highlightedData = data;
 				mdbla.highlightedGeographyID = data.fips;
 				mdbla.highlightedGeographyName = data.name;
+
+				var html = '<div class="legend-title">'+mdbla.highlightedGeographyName+'</div>';
+				$('#display-geography').html(html);
+
 				// process data for active tab only
 				switch (mdbla.activeTab)
 				{
@@ -208,13 +306,19 @@ mdbla.setMap = function()
 			})
 			.on('featureOver', function(e, latlng, pos, data) 
 			{
+				// let's change the cursor cuz that hand is too vague
 				$('#map').css('cursor', 'pointer');
+
+				// only refresh the data if we hover over a new feature
 				if(mdbla.highlightedGeographyID != data.fips && mdbla.allowHover)
 				{
-
 					mdbla.highlightedData = data;
 					mdbla.highlightedGeographyID = data.fips;
 					mdbla.highlightedGeographyName = data.name;
+					mdbla.highlightPolygon(data.fips,false);
+
+					var html = '<div class="legend-title">'+mdbla.highlightedGeographyName+'</div>';
+					$('#display-geography').html(html);
 
 					// process data for active tab only
 					switch (mdbla.activeTab)
@@ -227,20 +331,22 @@ mdbla.setMap = function()
 
 				}
 
-				// // only highlight the polygon if it is newly hovered upon
+				// only highlight the polygon if it is newly hovered upon
 				// if(mdbla.highlightedGeographyID != data.fips && mdbla.allowHover)
 				// {
-				// 	// mdbla.highlightPolygon(data.fips);
-				// 	mdbla.displayPrisonData(data);
+				// 	mdbla.highlightPolygon(data.fips);
+				// 	// mdbla.displayPrisonData(data);
 				// }
 			})
 			.on('load',function(){
+				console.log('map is loaded')
 				// add labels
-				// L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
-				// 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-				// 		subdomains: 'abcd',
-				// 		maxZoom: 19
-				// 	}).addTo(mdbla.map);				
+				// if(mdbla.layerLabel == undefined)
+				// {
+					// .addTo(mdbla.map);
+
+
+				// }
 			})
 		})
 
@@ -248,7 +354,6 @@ mdbla.setMap = function()
 
 mdbla.displayPrisonData = function()
 {
-	console.log('displaying prison data')
 	var fipsposition = mdbla.fipsarray.indexOf(mdbla.highlightedData.fips);
 	var jailranking = mdbla.jailranks[fipsposition];
 	var bookingsranking = mdbla.bookingsranks[fipsposition];
@@ -256,10 +361,8 @@ mdbla.displayPrisonData = function()
 
 	// prison data
 	var html = '<table border=0 class="table table-condensed" width="100%">';
-	// geography
-	html += '<tr><td style="vertical-align:middle" width="10%"><img src="https://cdn3.iconfinder.com/data/icons/black-white-social-media/32/logo_social_media_location-24.png"></td><td colspan=3 class="legend-title">'+mdbla.highlightedGeographyName+'</td></tr>';
 	// cost
-	html += '<tr><td style="vertical-align:middle"><img src="https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/441/aiga_cashier-24.png"></td><td style="vertical-align:middle" width="30%">Cost of incarceration</td><td style="vertical-align:middle;color:maroon;" colspan=2 class="legend-title">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</td></tr>';
+	html += '<tr><td style="vertical-align:middle"><img src="https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/441/aiga_cashier-24.png"></td><td style="vertical-align:middle" width="30%">Cost of incarceration</td><td style="vertical-align:middle;color:#E31A1C;" colspan=2 class="legend-title">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</td></tr>';
 	// total bookings
 	html += '<tr><td style="vertical-align:middle"><img src="img/arrests.png"></td><td style="vertical-align:middle" width="30%">Number of arrests</td><td align="right" width="50px" style="vertical-align:middle">'+ mdbla.numberWithCommas(mdbla.highlightedData._bookings)+'</td><td style="vertical-align:middle">'+mdbla.createDotOnBar(bookingsranking,mdbla.fipsarray.length)+'</td></tr>';
 	// days in jail
@@ -316,17 +419,12 @@ mdbla.displayPrisonData = function()
 
 mdbla.displayCharges = function()
 {
-	console.log('displaying charges')
 	var sql_statement1 = 'SELECT charge_des,count(*) as "count" FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+ mdbla.highlightedGeographyID +'\' GROUP BY charge_des ORDER BY count DESC';
-
+	var html = '';
 	// display charges
 	var sql = $.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement1+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
 
 		// display the geography being charted
-		var html = '<table class="table table-condensed">';
-
-		html += '<tr><td style="vertical-align:middle" width="10%"><img src="https://cdn3.iconfinder.com/data/icons/black-white-social-media/32/logo_social_media_location-24.png"></td><td colspan=3 class="legend-title">'+mdbla.highlightedGeographyName+'</td></tr></table>';
-
 		// show charge data in table
 		html += '<table class="table table-condensed table-striped">';
 		$.each(data.rows,function(i,val){
@@ -349,42 +447,35 @@ mdbla.displayTimeline = function()
 	// clear container
 	$('#legend-content-5').empty();
 
-	// display the geography being charted
-	var html = '<table class="table table-condensed">';
-
-	html += '<tr><td style="vertical-align:middle" width="10%"><img src="https://cdn3.iconfinder.com/data/icons/black-white-social-media/32/logo_social_media_location-24.png"></td><td colspan=3 class="legend-title">'+mdbla.highlightedGeographyName+'</td></tr></table>';
-
-	$('#legend-content-5').html(html);
-
 	var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+mdbla.highlightedGeographyID+'\'';
 
 	// display timeline and days in jail chart
 	$.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement2+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
-		console.log(data)
 
 		if(data.total_rows > 1000)
 		{
-			$('#legend-content-5').append('There are too many bookings ('+data.total_rows+') to display on the time chart...')
+			$('#legend-content-5').append('There are too many bookings for '+mdbla.highlightedGeographyName+' ('+data.total_rows+') to display on the time chart...')
 		}
 		else
 		{
+			$('#legend-content-5').append('Showing '+data.total_rows+' bookings:');
 			var timedata = [];
 			$.each(data.rows,function(i,val){
 				if(val._race_h == 1)
 				{
-					className = 'red'
+					className = 'color1'
 				}
 				else if(val._race_b == 1)
 				{
-					className = 'orange'
+					className = 'color2'
 				}
 				else if(val._race_w == 1)
 				{
-					className = 'blue'
+					className = 'color3'
 				}
 				else
 				{
-					className = 'green'
+					className = 'color4'
 				}
 				var thisItem = {
 					id: i,
@@ -424,80 +515,93 @@ mdbla.displayTimeline = function()
 
 mdbla.displayDaysInJailChart = function()
 {
-	console.log('displaying days in jail')
 	// clear container
 	$('#legend-content-6').empty();
-
-	// display the geography being charted
-	var html = '<table class="table table-condensed">';
-
-	html += '<tr><td style="vertical-align:middle" width="10%"><img src="https://cdn3.iconfinder.com/data/icons/black-white-social-media/32/logo_social_media_location-24.png"></td><td colspan=3 class="legend-title">'+mdbla.highlightedGeographyName+'</td></tr></table>';
-
-	$('#legend-content-6').html(html);
 
 	var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+mdbla.highlightedGeographyID+'\'';
 
 	// display timeline and days in jail chart
 	$.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement2+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
-		console.log(data)
-
 
 		var jailtimedata = [];
 
 		data.rows.sort(function(a, b) {
 			return parseFloat(b._jaildays) - parseFloat(a._jaildays);
 		});
+
+		if(data.total_rows > 100)
+		{
+			$('#legend-content-6').append('Showing 100 out of '+data.total_rows+' total records')
+		}
+		else
+		{
+			$('#legend-content-6').append('Showing '+data.total_rows+' total records')
+		}
+
 		$('#legend-content-6').append('<button type="button" class="btn btn-default btn-sm" id="stack-toggle">stack toggle</button>');
 
 		$.each(data.rows,function(i,val){
-			if(val._race_h == 1)
+			if(i < 100)
 			{
-				className = 'red'
-				race = 'HISPANIC'
-			}
-			else if(val._race_b == 1)
-			{
-				className = 'orange'
-				race = 'BLACK'
-			}
-			else if(val._race_w == 1)
-			{
-				className = 'blue'
-				race = 'WHITE'
-			}
-			else
-			{
-				className = 'green'
-				race = 'OTHER'
-			}
+				if(val._race_h == 1)
+				{
+					className = mdbla.colorPallete[0]
+					race = 'HISPANIC'
+				}
+				else if(val._race_b == 1)
+				{
+					className = mdbla.colorPallete[1]
+					race = 'BLACK'
+				}
+				else if(val._race_w == 1)
+				{
+					className = mdbla.colorPallete[2]
+					race = 'WHITE'
+				}
+				else
+				{
+					className = mdbla.colorPallete[3]
+					race = 'OTHER'
+				}
 
-			if(val._sex_m == 1)
-			{
-				sex = 'MALE';
-			}
-			else
-			{
-				sex = 'FEMALE';
-			}
-			var thisItem = {
-				id: i,
-				start: val.arrest_date,
-				type: 'point',
-				className: className
-			}
-			jailtimedata.push(thisItem)
+				if(val._sex_m == 1)
+				{
+					sex = 'MALE';
+				}
+				else
+				{
+					sex = 'FEMALE';
+				}
+				var thisItem = {
+					id: i,
+					start: val.arrest_date,
+					type: 'point',
+					className: className
+				}
+				jailtimedata.push(thisItem)
 
-			// add data to chart
-			if(val._jaildays > 0)
-			{
-				$('#legend-content-6').append('<div class="duration duration-container"><div class="duration-bar" data-toggle="tooltip" data-placement="left" title="'+ race + ' ' + sex + ' ' + val._jaildays+' days in prison for '+val.charge_des+'" style="float:left;width:'+val._jaildays+'px;background-color:'+className+'"></div><div class="duration-display">'+val._jaildays+'</div></div>')
-			}
-			$('[data-toggle="tooltip"]').tooltip()
-			
-			$("#stack-toggle").click(function(){
-				$(".duration").toggleClass("duration-container");
-			});
+				// is data too big?
+				var dataWindowWidth = $(window).width()/2-100;
+				if (val._jaildays > dataWindowWidth)
+				{
+					var barWidth = dataWindowWidth;
+				}
+				else
+				{
+					var barWidth = val._jaildays;
+				}
 
+				// add data to chart
+				if(val._jaildays > 0)
+				{
+					$('#legend-content-6').append('<div class="duration duration-container"><div class="duration-bar" data-toggle="tooltip" data-placement="left" title="'+ race + ' ' + sex + ' ' + val._jaildays+' days in prison for '+val.charge_des+'" style="float:left;width:'+barWidth+'px;background-color:'+className+'"></div><div class="duration-display">'+val._jaildays+'</div></div>')
+				}
+				$('[data-toggle="tooltip"]').tooltip()
+				
+				$("#stack-toggle").click(function(){
+					$(".duration").toggleClass("duration-container");
+				});
+			}
 		})
 	});
 
@@ -566,7 +670,7 @@ mdbla.createWaffleChart = function(values)
 	$.each(normalizedValues,function(i,val){
 		for (var j = 0; j < val; j++) 
 		{
-			waffle += '<div class="waffle-border" style="float:left;"><div class="waffle-box-empty" style="background-color:'+color[i]+'"></div></div>';
+			waffle += '<div class="waffle-border" style="float:left;"><div class="waffle-box-empty" style="background-color:'+mdbla.colorPallete[i]+'"></div></div>';
 		}
 	})
 	waffle += '</div>';
@@ -575,7 +679,7 @@ mdbla.createWaffleChart = function(values)
 	waffle += '<table class="table table-condensed smallfont">';
 
 	for (var i = 0; i < values.data.length; i++) {
-		waffle += '<tr><td width="75%">'+values.labels[i]+'</td><td width="25%" align="right">'+values.data[i]+'</td><td><div class="waffle-border" style="float:left;"><div class="waffle-box-empty" style="background-color:'+color[i]+'"></div></div></td></tr>';
+		waffle += '<tr><td width="75%">'+values.labels[i]+'</td><td width="25%" align="right">'+values.data[i]+'</td><td><div class="waffle-border" style="float:left;"><div class="waffle-box-empty" style="background-color:'+mdbla.colorPallete[i]+'"></div></div></td></tr>';
 	}
 
 	waffle += '</table></div>'
@@ -583,24 +687,70 @@ mdbla.createWaffleChart = function(values)
 	return waffle;
 }
 
-mdbla.highlightPolygon = function(fips)
+mdbla.createNeighborhoodDropdown = function()
 {
-	var HIGHLIGHT_STYLE = {
-		weight: 5,
-		color: '#FF0000',
+
+	mdbla.data.rows.sort(function(a, b) {
+		return parseFloat(b.name) - parseFloat(a.name);
+	});
+
+	$.each(mdbla.data.rows,function(i,val){
+		$('#dropdown-neighborhood').append('<li><a href="#" onclick="mdbla.highlightPolygon(\''+val.fips+'\')">'+val.name+'</a></li>')
+	})
+}
+
+mdbla.highlightPolygon = function(fips,zoomornot)
+{
+
+
+	mdbla.highlightedPolygonStyle = {
+		weight: 3,
+		color: '#1F78B4',
 		opacity: 1,
 		fillColor: '#FFFFFF',
-		fillOpacity: 0
+		fillOpacity: 0,
+		onEachFeature: function(feature, layer){
+			layer.on({
+				click: 0// console.log('highlighted polygon clicked')
+			})
+		}
 	};
 
-	var sql_statement1 = 'SELECT * FROM '+mdbla.cartoLayerTable[mdbla.geography]+' WHERE fips = \''+fips+'\'';
-	var sql = $.getJSON('https://mdbla.carto.com/api/v2/sql/?format=GeoJSON&q='+sql_statement1+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
+	function getObjects(obj, key, val) {
+		var objects = [];
+		for (var i in obj) {
+			if (!obj.hasOwnProperty(i)) continue;
+			if (typeof obj[i] == 'object') {
+				objects = objects.concat(getObjects(obj[i], key, val));
+			} else if (i == key && obj[key] == val) {
+				objects.push(obj);
+			}
+		}
+		return objects;
+	}
+
+	$.each(mdbla.geojson,function(i,val){
+		if(val.properties.fips == fips)
+		{
+			thisGeoJSON = val
+		}
+	})
+
 		if(mdbla.highlightedPolygon) {mdbla.map.removeLayer(mdbla.highlightedPolygon)};
-		mdbla.highlightedPolygon = L.geoJson(data,HIGHLIGHT_STYLE).addTo(map);
+		mdbla.highlightedPolygon = L.geoJson(thisGeoJSON,mdbla.highlightedPolygonStyle).addTo(mdbla.map);
 
 		// zoom to the polygon
-		mdbla.map.fitBounds(mdbla.highlightedPolygon.getBounds()); 
-	});	
+		if(zoomornot) mdbla.map.fitBounds(mdbla.highlightedPolygon.getBounds()); 
+
+
+	// var sql_statement1 = 'SELECT * FROM '+mdbla.cartoLayerTable[mdbla.geography]+' WHERE fips = \''+fips+'\'';
+	// var sql = $.getJSON('https://mdbla.carto.com/api/v2/sql/?format=GeoJSON&q='+sql_statement1+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
+	// 	if(mdbla.highlightedPolygon) {mdbla.map.removeLayer(mdbla.highlightedPolygon)};
+	// 	mdbla.highlightedPolygon = L.geoJson(data,mdbla.highlightedPolygonStyle).addTo(map);
+
+	// 	// zoom to the polygon
+	// 	mdbla.map.fitBounds(mdbla.highlightedPolygon.getBounds()); 
+	// });	
 }
 
 /*
