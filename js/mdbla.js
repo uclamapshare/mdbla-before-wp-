@@ -13,21 +13,25 @@
 	mdbla.bookingsarray = [];
 	mdbla.bookingsranks;
 	mdbla.legendWidth = '30%';
+	mdbla.bookmarks = [];
 	mdbla.allowHover = true;
-	// mdbla.geography = 'Block Groups';
+	// mdbla.geography = 'BlockGroups';
 	mdbla.highlightedGeographyID;
 	mdbla.highlightedGeographyName;
 	mdbla.geography = 'Neighborhoods';
+	mdbla.summary={};
+	mdbla.data={};
+	mdbla.geojson={};
 	mdbla.geographyIDColumn = {
-		'Block Groups' : 'fips_1',
+		'BlockGroups' : 'fips_1',
 		'Neighborhoods' : 'slug'
 	}
 	mdbla.cartoLayerTable = {
-		'Block Groups' : 'lasd_2010_2015_by_block_group',
+		'BlockGroups' : 'lasd_2010_2015_by_block_group',
 		'Neighborhoods' : 'lasd_2010_2015_by_neighborhoods'
 	}
 	mdbla.cartoLayerMap = {
-		'Block Groups' : 'https://mdbla.carto.com/api/v2/viz/7c32ed80-4eb6-11e6-a745-0e05a8b3e3d7/viz.json',
+		'BlockGroups' : 'https://mdbla.carto.com/api/v2/viz/7c32ed80-4eb6-11e6-a745-0e05a8b3e3d7/viz.json',
 		'Neighborhoods' : 'https://mdbla.carto.com/api/v2/viz/6c2a7b6c-5459-11e6-a6cd-0e233c30368f/viz.json'
 	}
 
@@ -79,7 +83,7 @@ $( window ).resize(function() {
 mdbla.resize = function()
 {
 	$('#map').css('height',$(window).height()+'px');
-	$('.menu-content').css('height',($(window).height()-97)+'px');
+	$('.menu-content').css('height',($(window).height()-200)+'px');
 }
 
 /***
@@ -93,6 +97,13 @@ $( function()
 	mdbla.resize()
 
 	mdbla.map = new L.Map('map');
+
+	// fit the map to LA County
+	mdbla.map.fitBounds([
+		[34.7, -118.85],
+		[33.8, -117.75]
+	]);
+
 	mdbla.layerSatellite.addTo(mdbla.map)
 	// add layer control
 	mdbla.layerControl = L.control.layers(null,{"Satellite":mdbla.layerSatellite,"Labels":mdbla.layerLabel}).addTo(mdbla.map)
@@ -130,35 +141,12 @@ mdbla.clickFunctions = function()
 	$('#button-charges').click(function(){ mdbla.activeTab = 'charges'; mdbla.displayCharges() })
 	$('#button-timeline').click(function(){ mdbla.activeTab = 'timeline'; mdbla.displayTimeline() })
 	$('#button-daysinjail').click(function(){ mdbla.activeTab = 'daysinjail'; mdbla.displayDaysInJailChart() })
-	$('#hover').click(function(){ mdbla.toggleHover() })
-
-}
-
-/***
-
-	User can click on a polygon to "lock" it on 
-	the map, which disables the dynamic hover data
-	display. This function toggles that functionality.
-
-***/
-mdbla.toggleHover = function()
-{
-	if(mdbla.allowHover)
-	{
-		mdbla.allowHover = false;
-		$('#hover').html('hover off');
-	}
-	else
-	{
-		mdbla.allowHover = true;
-		$('#hover').html('hover on');
-	}
 }
 
 /***
 
 	Allow toggling of main geography
-	Neighborhoods or Census Block Groups
+	Neighborhoods or Census BlockGroups
 
 ***/
 mdbla.toggleGeography = function()
@@ -166,6 +154,20 @@ mdbla.toggleGeography = function()
 	// reset the map
 	// mdbla.map.remove();
 	mdbla.cartoSubLayer.hide()
+
+	// remove highlighted polygon
+	if(mdbla.highlightedPolygon) {mdbla.map.removeLayer(mdbla.highlightedPolygon)};
+
+	// get rid of any open tooltip windows and legends
+	$('.cartodb-tooltip').hide();
+
+	//clear title
+	$('#display-geography-title').empty();
+
+	// clear bookmarks
+	$('#display-bookmarks').empty();
+	mdbla.bookmarks.length = 0;
+
 	// mdbla.map = new L.Map('map');
 	// mdbla.layerSatellite.addTo(mdbla.map)
 
@@ -181,15 +183,13 @@ mdbla.toggleGeography = function()
 
 	if(mdbla.geography == 'Neighborhoods')
 	{
-		mdbla.geography = 'Block Groups';
-		$('#button-neighborhoods').toggleClass('active');
-		$('#button-blockgroups').toggleClass('active');
+		mdbla.geography = 'BlockGroups';
+		$('#display-geography').html('Block Groups');
 	}
 	else
 	{
 		mdbla.geography = 'Neighborhoods';
-		$('#button-blockgroups').toggleClass('active');
-		$('#button-neighborhoods').toggleClass('active');
+		$('#display-geography').html('Neighborhoods');
 	}
 
 	// add the layer control back to the map
@@ -217,27 +217,45 @@ mdbla.cartoSQL = function(sql)
 	
 
 	// go fetch 'em
-	var sql1 = $.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement1+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
-		mdbla.summary = data.rows[0];
-	});
-
-	// chain them so that ajax doesn't screw us
-	var sql2 = sql1.then(function(){
-		$.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement2+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
-			mdbla.data = data;
-			// we got the data, let's populate the dropdown-neighborhood
-			mdbla.createNeighborhoodDropdown();
+	if(mdbla.summary[mdbla.geography] == undefined)
+	{
+		var sql1 = $.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement1+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
+			mdbla.summary[mdbla.geography] = data.rows[0];
 		});
-	})
-	.then(function(){
-		$.getJSON('https://mdbla.carto.com/api/v2/sql/?format=GeoJSON&q='+sql_statement3+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
-		mdbla.geojson = data.features;
-	}).then(function(){
-			// data is got. now create the rankings and start the mapping
-			mdbla.createRankings();
-			mdbla.setMap();
+	}
+
+	/*
+		Go get the data from Carto
+		Cache the data into mdbla objects
+		Chain them so that ajax doesn't screw us
+	*/
+	// if it hasn't been cached
+	if(mdbla.data[mdbla.geography] == undefined)
+	{
+		var sql2 = sql1.then(function(){
+			$.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement2+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
+				mdbla.data[mdbla.geography] = data;
+				// we got the data, let's populate the dropdown-neighborhood
+				// mdbla.createNeighborhoodDropdown();
+			});
 		})
-	})
+		.then(function(){
+			$.getJSON('https://mdbla.carto.com/api/v2/sql/?format=GeoJSON&q='+sql_statement3+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
+			mdbla.geojson[mdbla.geography] = data.features;
+		}).then(function(){
+				// data is got. now create the rankings and start the mapping
+				mdbla.createRankings();
+				mdbla.setMap();
+			})
+		})	
+	}
+	// use cached data
+	else
+	{
+		// data is got. now create the rankings and start the mapping
+		mdbla.createRankings();
+		mdbla.setMap();		
+	}
 }
 
 /***
@@ -245,7 +263,6 @@ mdbla.cartoSQL = function(sql)
 	Initialize the map and add the CartoDB layer
 
 ***/
-
 mdbla.setMap = function()
 {
 	// remove layer if it exists
@@ -253,16 +270,6 @@ mdbla.setMap = function()
 	{
 		mdbla.cartoSubLayer.hide()
 	}
-
-	// fit the map to LA County
-	mdbla.map.fitBounds([
-		[34.7, -118.85],
-		[33.8, -117.75]
-	]);
-
-	// Use styleLayer to add a Mapbox style created in Mapbox Studio
-	
-	// .addTo(mdbla.map);
 
 	mdbla.layerCarto = cartodb.createLayer(mdbla.map, mdbla.cartoLayerMap[mdbla.geography],{legends:false,zIndex:2})
 		.addTo(mdbla.map)
@@ -280,28 +287,17 @@ mdbla.setMap = function()
 
 				// turn off the hovering and add a button to allow it back
 				mdbla.allowHover = false;
-				$('#button-hover').show();
-				$('#button-hover').html('Release '+data.name).click(function(){mdbla.allowHover = true; $('#button-hover').hide()})
+				// $('#button-hover').show();
+				// $('#button-hover').html('Release '+data.name).click(function(){mdbla.allowHover = true; $('#button-hover').hide()})
+
+				// assign map actions
+				mdbla.mapAction(data);
+
+				// create bookmark
+				mdbla.createBookmark();
 
 				// highlight the polygon
 				mdbla.highlightPolygon(data.fips,true);
-
-				// let the app know what happened
-				mdbla.highlightedData = data;
-				mdbla.highlightedGeographyID = data.fips;
-				mdbla.highlightedGeographyName = data.name;
-
-				var html = '<div class="legend-title">'+mdbla.highlightedGeographyName+'</div>';
-				$('#display-geography').html(html);
-
-				// process data for active tab only
-				switch (mdbla.activeTab)
-				{
-					case 'prison': mdbla.displayPrisonData(); break;
-					case 'charges' : mdbla.displayCharges(); break;
-					case 'timeline' : mdbla.displayTimeline(); break;
-					case 'daysinjail' : mdbla.displayDaysInJailChart(); break;
-				}
 
 			})
 			.on('featureOver', function(e, latlng, pos, data) 
@@ -312,31 +308,12 @@ mdbla.setMap = function()
 				// only refresh the data if we hover over a new feature
 				if(mdbla.highlightedGeographyID != data.fips && mdbla.allowHover)
 				{
-					mdbla.highlightedData = data;
-					mdbla.highlightedGeographyID = data.fips;
-					mdbla.highlightedGeographyName = data.name;
+					// assign map actions
+					mdbla.mapAction(data);
+
+					// highlight the polygon
 					mdbla.highlightPolygon(data.fips,false);
-
-					var html = '<div class="legend-title">'+mdbla.highlightedGeographyName+'</div>';
-					$('#display-geography').html(html);
-
-					// process data for active tab only
-					switch (mdbla.activeTab)
-					{
-						case 'prison': mdbla.displayPrisonData(); break;
-						case 'charges' : mdbla.displayCharges(); break;
-						case 'timeline' : mdbla.displayTimeline(); break;
-						case 'daysinjail' : mdbla.displayDaysInJailChart(); break;
-					}
-
 				}
-
-				// only highlight the polygon if it is newly hovered upon
-				// if(mdbla.highlightedGeographyID != data.fips && mdbla.allowHover)
-				// {
-				// 	mdbla.highlightPolygon(data.fips);
-				// 	// mdbla.displayPrisonData(data);
-				// }
 			})
 			.on('load',function(){
 				console.log('map is loaded')
@@ -352,6 +329,66 @@ mdbla.setMap = function()
 
 };
 
+mdbla.mapAction = function(data)
+{
+
+	// let the app know what happened
+	mdbla.highlightedData = data;
+	mdbla.highlightedGeographyID = data.fips;
+	mdbla.highlightedGeographyName = data.name;
+
+	var html = '<div class="legend-title">'+mdbla.highlightedGeographyName+'</div>';
+	$('#display-geography-title').html(html);
+
+	// process data for active tab only
+	switch (mdbla.activeTab)
+	{
+		case 'prison': mdbla.displayPrisonData(); break;
+		case 'charges' : mdbla.displayCharges(); break;
+		case 'timeline' : mdbla.displayTimeline(); break;
+		case 'daysinjail' : mdbla.displayDaysInJailChart(); break;
+	}
+}
+
+/***
+
+	
+
+***/
+mdbla.createBookmark = function()
+{
+
+	// create default params
+	var thisID = mdbla.highlightedGeographyID;
+	var thisData = mdbla.highlightedData;
+
+	// if this is the first bookmark, get rid of the help text
+	if(mdbla.bookmarks.length == 0)
+	{
+		$('#display-bookmarks').empty();
+		mdbla.allowHover = true;
+	}
+
+	// add the bookmark to the array
+	mdbla.bookmarks.push(thisID);
+
+	// add it to the bookmark bar
+	$('#display-bookmarks').append('<button id="bookmark-'+mdbla.highlightedGeographyID+'" type="button" class="btn btn-default btn-sm">'+mdbla.highlightedGeographyName+' <span id="close-'+mdbla.highlightedGeographyID+'" class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></button>');
+
+	// make it clickable
+	$('#bookmark-'+mdbla.highlightedGeographyID).click(function(){
+		console.log('clicked '+thisID)
+		mdbla.highlightPolygon(thisID,true);
+		mdbla.highlightedData = thisData;
+		mdbla.mapAction(thisData);
+	})
+
+	// allow user to delete the bookmark
+	$('#close-'+mdbla.highlightedGeographyID).click(function(){
+		$('#bookmark-'+mdbla.highlightedGeographyID).css('display','none');
+	})
+}
+
 mdbla.displayPrisonData = function()
 {
 	var fipsposition = mdbla.fipsarray.indexOf(mdbla.highlightedData.fips);
@@ -360,20 +397,52 @@ mdbla.displayPrisonData = function()
 	// var name = data.name;
 
 	// prison data
-	var html = '<table border=0 class="table table-condensed" width="100%">';
+	var html = '<table border=0 class="table table-condensed">';
 	// cost
-	html += '<tr><td style="vertical-align:middle"><img src="https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/441/aiga_cashier-24.png"></td><td style="vertical-align:middle" width="30%">Cost of incarceration</td><td style="vertical-align:middle;color:#E31A1C;" colspan=2 class="legend-title">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</td></tr>';
+	html += '<tr><td style="vertical-align:middle" width="30%">Cost of incarceration</td><td style="vertical-align:middle;color:#E31A1C;" colspan=2 class="legend-title">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</td></tr>';
 	// total bookings
-	html += '<tr><td style="vertical-align:middle"><img src="img/arrests.png"></td><td style="vertical-align:middle" width="30%">Number of arrests</td><td align="right" width="50px" style="vertical-align:middle">'+ mdbla.numberWithCommas(mdbla.highlightedData._bookings)+'</td><td style="vertical-align:middle">'+mdbla.createDotOnBar(bookingsranking,mdbla.fipsarray.length)+'</td></tr>';
+	html += '<tr><td style="vertical-align:middle" width="30%">Number of arrests</td><td align="right" width="50px" style="vertical-align:middle">'+ mdbla.numberWithCommas(mdbla.highlightedData._bookings)+'</td><td style="vertical-align:middle">'+mdbla.createDotOnBar(bookingsranking,mdbla.fipsarray.length)+'</td></tr>';
 	// days in jail
-	html += '<tr><td style="vertical-align:middle"><img src="https://cdn2.iconfinder.com/data/icons/nasty/60/prison_jail-24.png"></td><td style="vertical-align:middle" width="30%">Days in jail</td><td  align="right" style="vertical-align:middle">'+ mdbla.numberWithCommas(mdbla.highlightedData._jaildays)+'</td><td style="vertical-align:middle">'+mdbla.createDotOnBar(jailranking,mdbla.fipsarray.length)+'</td></tr>';
+	html += '<tr><td style="vertical-align:middle" width="30%">Days in jail</td><td  align="right" style="vertical-align:middle">'+ mdbla.numberWithCommas(mdbla.highlightedData._jaildays)+'</td><td style="vertical-align:middle">'+mdbla.createDotOnBar(jailranking,mdbla.fipsarray.length)+'</td></tr>';
 
 	html += '</table>';
 
 	$('#legend-content-1').html(html);
 
 	// let's add some waffles
-	$('#legend-content-2').html('<div class="container"><div class="row">');
+
+	// var html = '<div class="container" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;"><div class="row">';
+	// var html = '<div style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;">';
+
+	// Cost of incarceration
+	var html = '<div class="col-md-6" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="legend-title" style="color:'+mdbla.colorPallete[4]+'">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</span><br>Cost of incarceration</div>';
+	
+	// Days in Jail
+	html += '<div class="col-md-6" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="legend-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._jaildays))+'</span><br>Days in jail</div>';
+
+	// Number of arrests
+	var peopleicon = '<img src="img/icon-man-16.png">';
+	var peopleicons = '';
+	if(mdbla.geography == 'Neighborhoods')
+	{
+		var peoplepericon = 100;		
+	}
+	else
+	{
+		var peoplepericon = 10;
+	}
+
+	for (var i = 0; i < Math.round(mdbla.highlightedData._bookings/peoplepericon); i++) {
+		peopleicons += peopleicon;
+	}
+	html += '<div class="col-md-12" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="legend-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._bookings))+'</span><br>('+peopleicon+' = '+peoplepericon+' arrests)<div style="padding:4px;">'+peopleicons+'</div>Number of arrests</div>';
+
+	// html += '</div>';
+
+	$('#legend-content-1').html(html);
+
+	// let's add some waffles
+	$('#legend-content-2').html('');
 
 	// race waffle
 	var wafflevalues = {};
@@ -396,25 +465,6 @@ mdbla.displayPrisonData = function()
 	wafflevalues.labels = ['Misdimeaner','Felony','D','O']
 	$('#legend-content-2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
 
-	$('#legend-content-2').append('</div>');
-
-	// let's get more data from bookings table
-	// WARNING: Could be too big to handle...
-	// var sql_statement1 = 'SELECT charge_des,count(*) as "count" FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+data.fips+'\' GROUP BY charge_des ORDER BY count DESC';
-	// var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+data.fips+'\'';
-
-	// // display charges
-	// var sql = $.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement1+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
-	// 	mdbla.displayCharges(data,name);
-	// })
-
-	// // display timeline and days in jail chart
-	// .then(function(){
-	// 	$.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement2+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
-	// 		mdbla.displayTimeline(data.rows);
-	// 		mdbla.displayDaysInJailChart(data.rows);
-	// 	});
-	// });
 }
 
 mdbla.displayCharges = function()
@@ -458,7 +508,7 @@ mdbla.displayTimeline = function()
 		}
 		else
 		{
-			$('#legend-content-5').append('Showing '+data.total_rows+' bookings:');
+			// $('#legend-content-5').append('Showing '+data.total_rows+' bookings:');
 			var timedata = [];
 			$.each(data.rows,function(i,val){
 				if(val._race_h == 1)
@@ -616,7 +666,7 @@ mdbla.displayDaysInJailChart = function()
 ***/
 mdbla.createRankings = function()
 {
-	$.each(mdbla.data.rows,function(i,val){
+	$.each(mdbla.data[mdbla.geography].rows,function(i,val){
 		mdbla.jailarray.push(val._jaildays)
 		mdbla.bookingsarray.push(val._bookings)
 		mdbla.fipsarray.push(val.fips)
@@ -643,8 +693,6 @@ mdbla.createDotOnBar = function(val,max)
 
 mdbla.createWaffleChart = function(values)
 {
-	var color = ['red','orange','blue','green'];
-
 	// var values = [40,20,10,5];
 	var sum = 0;
 	$.each(values.data,function(i,val){
@@ -658,14 +706,14 @@ mdbla.createWaffleChart = function(values)
 	var count = 0;
 
 	// waffle table
-	var waffle = '<div style="float:left;">';
+	var waffle = '<div style="text-align:center">';
 
 	// title
 	waffle += '<h2>'+values.title+'</h2>';
 
 
 	// waffle it
-	waffle += '<div class="waffle-container" style="float:left;">';
+	waffle += '<div class="waffle-container">';
 
 	$.each(normalizedValues,function(i,val){
 		for (var j = 0; j < val; j++) 
@@ -676,10 +724,10 @@ mdbla.createWaffleChart = function(values)
 	waffle += '</div>';
 
 	// legend and values
-	waffle += '<table class="table table-condensed smallfont">';
+	waffle += '<table class="table table-condensed smallfont" style="text-align:left;">';
 
 	for (var i = 0; i < values.data.length; i++) {
-		waffle += '<tr><td width="75%">'+values.labels[i]+'</td><td width="25%" align="right">'+values.data[i]+'</td><td><div class="waffle-border" style="float:left;"><div class="waffle-box-empty" style="background-color:'+mdbla.colorPallete[i]+'"></div></div></td></tr>';
+		waffle += '<tr><td width="50%">'+values.labels[i]+'</td><td width="50%" align="right">'+values.data[i]+' ('+normalizedValues[i]+'%)</td><td><div class="waffle-border" style="float:left;"><div class="waffle-box-empty" style="background-color:'+mdbla.colorPallete[i]+'"></div></div></td></tr>';
 	}
 
 	waffle += '</table></div>'
@@ -690,11 +738,11 @@ mdbla.createWaffleChart = function(values)
 mdbla.createNeighborhoodDropdown = function()
 {
 
-	mdbla.data.rows.sort(function(a, b) {
+	mdbla.data[mdbla.geography].rows.sort(function(a, b) {
 		return parseFloat(b.name) - parseFloat(a.name);
 	});
 
-	$.each(mdbla.data.rows,function(i,val){
+	$.each(mdbla.data[mdbla.geography].rows,function(i,val){
 		$('#dropdown-neighborhood').append('<li><a href="#" onclick="mdbla.highlightPolygon(\''+val.fips+'\')">'+val.name+'</a></li>')
 	})
 }
@@ -729,28 +777,19 @@ mdbla.highlightPolygon = function(fips,zoomornot)
 		return objects;
 	}
 
-	$.each(mdbla.geojson,function(i,val){
+	$.each(mdbla.geojson[mdbla.geography],function(i,val){
 		if(val.properties.fips == fips)
 		{
 			thisGeoJSON = val
 		}
 	})
 
-		if(mdbla.highlightedPolygon) {mdbla.map.removeLayer(mdbla.highlightedPolygon)};
-		mdbla.highlightedPolygon = L.geoJson(thisGeoJSON,mdbla.highlightedPolygonStyle).addTo(mdbla.map);
+	if(mdbla.highlightedPolygon) {mdbla.map.removeLayer(mdbla.highlightedPolygon)};
+	mdbla.highlightedPolygon = L.geoJson(thisGeoJSON,mdbla.highlightedPolygonStyle).addTo(mdbla.map);
 
-		// zoom to the polygon
-		if(zoomornot) mdbla.map.fitBounds(mdbla.highlightedPolygon.getBounds()); 
+	// zoom to the polygon
+	if(zoomornot) mdbla.map.fitBounds(mdbla.highlightedPolygon.getBounds()); 
 
-
-	// var sql_statement1 = 'SELECT * FROM '+mdbla.cartoLayerTable[mdbla.geography]+' WHERE fips = \''+fips+'\'';
-	// var sql = $.getJSON('https://mdbla.carto.com/api/v2/sql/?format=GeoJSON&q='+sql_statement1+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
-	// 	if(mdbla.highlightedPolygon) {mdbla.map.removeLayer(mdbla.highlightedPolygon)};
-	// 	mdbla.highlightedPolygon = L.geoJson(data,mdbla.highlightedPolygonStyle).addTo(map);
-
-	// 	// zoom to the polygon
-	// 	mdbla.map.fitBounds(mdbla.highlightedPolygon.getBounds()); 
-	// });	
 }
 
 /*

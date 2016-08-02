@@ -21,7 +21,27 @@
 	<div class="row">
 		<!-- map  -->
 		<div class="col-xs-6">
-			<button type="button" class="btn btn-default btn-sm" id="button-hover" style="">hover</button>
+
+			<div id="map-buttons">
+
+				<!-- Split button -->
+				<div class="btn-group">
+					<button type="button" class="btn btn-default" id="display-geography">Neighborhoods</button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span class="caret"></span>
+						<span class="sr-only">Toggle Dropdown</span>
+					</button>
+					<ul class="dropdown-menu">
+						<li><a href="#" id="button-neighborhoods">Neighborhoods</a></li>
+						<li><a href="#" id="button-blockgroups">Block Groups</a></li>
+					</ul>
+				</div>
+
+				<!-- <button type="button" class="btn btn-default btn-sm active" id="button-neighborhoods">neighborhoods</button>
+				<button type="button" class="btn btn-default btn-sm" id="button-blockgroups">block groups</button>
+
+				<button type="button" class="btn btn-default btn-sm" id="button-hover">hover</button> -->
+			</div>
 			<div id='map'></div>
 		</div>
 		<!-- data -->
@@ -35,18 +55,15 @@
 					<li><a data-toggle="tab" href="#daysinjail" id="button-daysinjail">Days in Jail</a></li>
 				</ul>
 
-				<!-- options bar -->
-				<div id="display-options">
-					<button type="button" class="btn btn-default btn-sm active" id="button-neighborhoods">neighborhoods</button>
-					<button type="button" class="btn btn-default btn-sm" id="button-blockgroups">block groups</button>
-				</div>
+				<!-- bookmarks bar -->
+				<div id="display-bookmarks-container"><div id="display-bookmarks"><div class="well well-sm">Click on a location on the map to bookmark it here</div></div></div>
 
 				<!-- options bar -->
 				<div id="display-geography"></div>
 				
 				<!-- content -->
 				<div class="tab-content">
-					<div id="prison" style="padding:8px;" class="tab-pane fade in active">
+					<div id="prison" style="padding:8px;" class="tab-pane fade in active menu-content">
 						<div style="clear:both" id="legend-content-1"></div>
 						<div style="clear:both" id="legend-content-2"></div>
 						<div style="clear:both" id="legend-content-3"></div>
