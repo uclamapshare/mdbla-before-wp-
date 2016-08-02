@@ -44,11 +44,11 @@
 			</div>
 			<div id='map'></div>
 		</div>
-		<!-- data -->
-		<div class="col-xs-6" id='legend'>
+		<!-- stats -->
+		<div class="col-xs-6" id='stats'>
 			<div>
 				<!-- menu items -->
-				<ul class="nav nav-pills nav-justified">
+				<ul id="main-menu" class="nav nav-pills nav-justified">
 					<li class="active"><a data-toggle="tab" href="#prison" id="button-prison">Prison Data</a></li>
 					<li><a data-toggle="tab" href="#charges" id="button-charges">Charges</a></li>
 					<li><a data-toggle="tab" href="#timeline" id="button-timeline">Timeline</a></li>
@@ -56,27 +56,27 @@
 				</ul>
 
 				<!-- bookmarks bar -->
-				<div id="display-bookmarks-container"><div id="display-bookmarks"><div class="well well-sm">Click on a location on the map to bookmark it here</div></div></div>
+				<div id="display-bookmarks-container"><div id="display-bookmarks">Click on a location on the map to bookmark it here</div></div>
 
 				<!-- options bar -->
 				<div id="display-geography-title"></div>
 				
 				<!-- content -->
-				<div class="tab-content">
+				<div id="display-stats" class="tab-content">
 					<div id="prison" style="padding:8px;" class="tab-pane fade in active menu-content">
-						<div style="clear:both" id="legend-content-1"></div>
-						<div style="clear:both" id="legend-content-2"></div>
-						<div style="clear:both" id="legend-content-3"></div>
+						<div style="clear:both" id="stats-content-1"></div>
+						<div style="clear:both" id="stats-content-2"></div>
+						<div style="clear:both" id="stats-content-3"></div>
 						
 					</div>
 					<div id="charges" class="tab-pane fade menu-content">
-						<div style="clear:both" id="legend-content-4"></div>
+						<div style="clear:both" id="stats-content-4"></div>
 					</div>
 					<div id="timeline" class="tab-pane fade menu-content">
-						<div style="clear:both" id="legend-content-5"></div>
+						<div style="clear:both" id="stats-content-5"></div>
 					</div>
 					<div id="daysinjail" class="tab-pane fade menu-content">
-						<div style="clear:both" id="legend-content-6"></div>
+						<div style="clear:both" id="stats-content-6"></div>
 					</div>
 				</div>
 			</div>
@@ -84,10 +84,25 @@
 	</div>
 </div>
 
-<nav class="navbar navbar-default navbar-fixed-bottom" style="background-color: rgba(0,0,0,0.9); color: white;">
+<!-- Legend -->
+<div id="legend-container">
+	<table class="legend-table">
+		<tr>
+			<td style="background-color: #e31a1c;border:1px solid gray;height:20px">
+				<div></div>
+			</td>
+			<td>
+				more than $10,000,000
+			</td>
+		</tr>
+	</table>
+</div>
+
+<!-- Footer -->
+<nav id="footer" class="navbar navbar-default navbar-fixed-bottom" style="background-color: rgba(0,0,0,0.9); color: white;">
 	<div class="container">
 		<p class="navbar-text navbar-right">
-			* All statistics are based on police bookings in Los Angeles County recorded between 2010 and 2015. Data was collected from the Los Angeles Sherrif's Department.
+			* All statistics are based on police bookings in Los Angeles County recorded between 2010 and 2015. Data was collected from the Los Angeles Sheriff's Department.
 		</p>
 	</div>
 </nav>

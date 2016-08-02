@@ -10,7 +10,7 @@ body { margin:0; padding:0; }
 .smallfont {
 	font-size:0.8em;
 }
-#legend {
+#stats {
 	padding-top: 15px;
 }
 
@@ -18,7 +18,7 @@ body { margin:0; padding:0; }
     padding: 5px 15px;
 }
 
-.legend {
+.stats {
 	background-color: rgba(255,255,255,0.9);
 	/*border-radius: 3px;*/
 	top: 10px;
@@ -33,23 +33,23 @@ body { margin:0; padding:0; }
 	height: 500px;
 }
 
-.legend h4 {
+.stats h4 {
 	margin: 0 0 10px;
 }
 
-.legend div span {
+.stats div span {
 	border-radius: 50%;
 	display: inline-block;
 	height: 10px;
 	margin-right: 5px;
 	width: 10px;
 }
-.legend-title {
+.stats-title {
 	font-size:2.5em;
 	padding: 10px 0;
 }
 
-.legend-toggle {
+.stats-toggle {
 	font-size:2.5em;
 	padding: 10px 0;
 	float: left;
@@ -171,6 +171,30 @@ td {
 	margin:5px 0;
 }
 
+#legend-container
+{
+	background-color: rgba(255,255,255,0.9);
+	position: absolute;
+	bottom: 60px;
+	left: 10px;
+	/*width: 20%;*/
+	min-width: 100px;
+	display:none;
+}
+
+.legend-table
+{
+	margin-bottom: 0px;
+	padding:10px;
+}
+
+table.legend-table td{
+    padding: 4px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    min-width: 20px
+}
+
 /*
 	modify bootstrap
 */
@@ -191,10 +215,29 @@ a {
     overflow-x: hidden;
 }
 
-
 .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
     position: relative;
     min-height: 1px;
     padding-right: 15px;
     padding-left: 0px;
+}
+
+.navbar-default {
+    border-color: rgba(255,255,255,0.2);
+}
+
+.navbar-default .navbar-text {
+    color: #999;
+}
+
+/***
+
+	leaflet 
+
+***/
+.leaflet-control-layers-toggle{
+    opacity: .75;
+    /*background-image: url(images/icons-000000@2x.png);
+    background-repeat: no-repeat;*/
+    background-size: 26px 26px;
 }

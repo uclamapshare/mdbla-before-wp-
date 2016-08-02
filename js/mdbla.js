@@ -12,7 +12,7 @@
 	mdbla.jailranks;
 	mdbla.bookingsarray = [];
 	mdbla.bookingsranks;
-	mdbla.legendWidth = '30%';
+	mdbla.statsWidth = '30%';
 	mdbla.bookmarks = [];
 	mdbla.allowHover = true;
 	// mdbla.geography = 'BlockGroups';
@@ -83,7 +83,11 @@ $( window ).resize(function() {
 mdbla.resize = function()
 {
 	$('#map').css('height',$(window).height()+'px');
-	$('.menu-content').css('height',($(window).height()-200)+'px');
+	// calculate how much to subtract from window height
+	var subtractamount = 35+$('#main-menu').height()+$('#display-bookmarks-container').height()+$('#display-geography-title').height()+$('#footer').height();
+	console.log(subtractamount)
+	console.log($('#main-menu').height()+'::'+$('#display-bookmarks-container').height()+'::'+$('#display-geography-title').height()+'::'+$('#footer').height())
+	$('.menu-content').css('height',$(window).height()-subtractamount+'px');
 }
 
 /***
@@ -158,11 +162,11 @@ mdbla.toggleGeography = function()
 	// remove highlighted polygon
 	if(mdbla.highlightedPolygon) {mdbla.map.removeLayer(mdbla.highlightedPolygon)};
 
-	// get rid of any open tooltip windows and legends
+	// get rid of any open tooltip windows and statss
 	$('.cartodb-tooltip').hide();
 
 	//clear title
-	$('#display-geography-title').empty();
+	$('#display-geography-title').html('...loading...');
 
 	// clear bookmarks
 	$('#display-bookmarks').empty();
@@ -174,12 +178,12 @@ mdbla.toggleGeography = function()
 	mdbla.allowHover = true;
 
 	// reset the tabs
-	$('#legend-content-1').empty();
-	$('#legend-content-2').empty();
-	$('#legend-content-3').empty();
-	$('#legend-content-4').empty();
-	$('#legend-content-5').empty();
-	$('#legend-content-6').empty();
+	$('#stats-content-1').empty();
+	$('#stats-content-2').empty();
+	$('#stats-content-3').empty();
+	$('#stats-content-4').empty();
+	$('#stats-content-5').empty();
+	$('#stats-content-6').empty();
 
 	if(mdbla.geography == 'Neighborhoods')
 	{
@@ -271,6 +275,8 @@ mdbla.setMap = function()
 		mdbla.cartoSubLayer.hide()
 	}
 
+	$('#display-geography-title').empty();
+
 	mdbla.layerCarto = cartodb.createLayer(mdbla.map, mdbla.cartoLayerMap[mdbla.geography],{legends:false,zIndex:2})
 		.addTo(mdbla.map)
 		.on('done',function(layer){
@@ -285,6 +291,7 @@ mdbla.setMap = function()
 
 			layer.on('featureClick',function(e, pos, latlng, data){
 
+				console.log('clicked on '+data.name)
 				// turn off the hovering and add a button to allow it back
 				mdbla.allowHover = false;
 				// $('#button-hover').show();
@@ -337,7 +344,7 @@ mdbla.mapAction = function(data)
 	mdbla.highlightedGeographyID = data.fips;
 	mdbla.highlightedGeographyName = data.name;
 
-	var html = '<div class="legend-title">'+mdbla.highlightedGeographyName+'</div>';
+	var html = '<div class="stats-title">'+mdbla.highlightedGeographyName+'</div>';
 	$('#display-geography-title').html(html);
 
 	// process data for active tab only
@@ -366,31 +373,39 @@ mdbla.createBookmark = function()
 	if(mdbla.bookmarks.length == 0)
 	{
 		$('#display-bookmarks').empty();
-		mdbla.allowHover = true;
 	}
 
-	// add the bookmark to the array
-	mdbla.bookmarks.push(thisID);
+	// add the bookmark to the array if it is not already in there
+	if(mdbla.bookmarks.indexOf(thisID)==-1)
+	{
+		mdbla.bookmarks.push(thisID);
 
-	// add it to the bookmark bar
-	$('#display-bookmarks').append('<button id="bookmark-'+mdbla.highlightedGeographyID+'" type="button" class="btn btn-default btn-sm">'+mdbla.highlightedGeographyName+' <span id="close-'+mdbla.highlightedGeographyID+'" class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></button>');
+		// add it to the bookmark bar
+		$('#display-bookmarks').append('<button id="bookmark-'+thisID+'" type="button" class="btn btn-default btn-sm">'+mdbla.highlightedGeographyName+' <span id="close-'+thisID+'" class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></button>');
 
-	// make it clickable
-	$('#bookmark-'+mdbla.highlightedGeographyID).click(function(){
-		console.log('clicked '+thisID)
-		mdbla.highlightPolygon(thisID,true);
-		mdbla.highlightedData = thisData;
-		mdbla.mapAction(thisData);
-	})
+		// make it clickable
+		$('#bookmark-'+thisID).click(function(){
+			console.log('clicked '+thisID)
+			mdbla.highlightPolygon(thisID,true);
+			mdbla.highlightedData = thisData;
+			mdbla.mapAction(thisData);
+		})
 
-	// allow user to delete the bookmark
-	$('#close-'+mdbla.highlightedGeographyID).click(function(){
-		$('#bookmark-'+mdbla.highlightedGeographyID).css('display','none');
-	})
+		// allow user to delete the bookmark
+		$('#close-'+thisID).click(function(){
+			$('#bookmark-'+thisID).css('display','none');
+			console.log('deleting '+mdbla.bookmarks.indexOf(thisID))
+			mdbla.bookmarks.splice(mdbla.bookmarks.indexOf(thisID),1);
+			if(mdbla.bookmarks.length == 0) mdbla.allowHover = true;
+		})
+	}
 }
 
 mdbla.displayPrisonData = function()
 {
+	// let's resize the windows
+	mdbla.resize();
+
 	var fipsposition = mdbla.fipsarray.indexOf(mdbla.highlightedData.fips);
 	var jailranking = mdbla.jailranks[fipsposition];
 	var bookingsranking = mdbla.bookingsranks[fipsposition];
@@ -399,7 +414,7 @@ mdbla.displayPrisonData = function()
 	// prison data
 	var html = '<table border=0 class="table table-condensed">';
 	// cost
-	html += '<tr><td style="vertical-align:middle" width="30%">Cost of incarceration</td><td style="vertical-align:middle;color:#E31A1C;" colspan=2 class="legend-title">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</td></tr>';
+	html += '<tr><td style="vertical-align:middle" width="30%">Cost of incarceration</td><td style="vertical-align:middle;color:#E31A1C;" colspan=2 class="stats-title">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</td></tr>';
 	// total bookings
 	html += '<tr><td style="vertical-align:middle" width="30%">Number of arrests</td><td align="right" width="50px" style="vertical-align:middle">'+ mdbla.numberWithCommas(mdbla.highlightedData._bookings)+'</td><td style="vertical-align:middle">'+mdbla.createDotOnBar(bookingsranking,mdbla.fipsarray.length)+'</td></tr>';
 	// days in jail
@@ -407,7 +422,7 @@ mdbla.displayPrisonData = function()
 
 	html += '</table>';
 
-	$('#legend-content-1').html(html);
+	$('#stats-content-1').html(html);
 
 	// let's add some waffles
 
@@ -415,10 +430,10 @@ mdbla.displayPrisonData = function()
 	// var html = '<div style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;">';
 
 	// Cost of incarceration
-	var html = '<div class="col-md-6" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="legend-title" style="color:'+mdbla.colorPallete[4]+'">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</span><br>Cost of incarceration</div>';
+	var html = '<div class="col-md-6" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="stats-title" style="color:'+mdbla.colorPallete[4]+'">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</span><br>Cost of incarceration</div>';
 	
 	// Days in Jail
-	html += '<div class="col-md-6" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="legend-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._jaildays))+'</span><br>Days in jail</div>';
+	html += '<div class="col-md-6" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="stats-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._jaildays))+'</span><br>Days in jail</div>';
 
 	// Number of arrests
 	var peopleicon = '<img src="img/icon-man-16.png">';
@@ -435,35 +450,35 @@ mdbla.displayPrisonData = function()
 	for (var i = 0; i < Math.round(mdbla.highlightedData._bookings/peoplepericon); i++) {
 		peopleicons += peopleicon;
 	}
-	html += '<div class="col-md-12" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="legend-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._bookings))+'</span><br>('+peopleicon+' = '+peoplepericon+' arrests)<div style="padding:4px;">'+peopleicons+'</div>Number of arrests</div>';
+	html += '<div class="col-md-12" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="stats-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._bookings))+'</span><br>('+peopleicon+' = '+peoplepericon+' arrests)<div style="padding:4px;">'+peopleicons+'</div>Number of arrests</div>';
 
 	// html += '</div>';
 
-	$('#legend-content-1').html(html);
+	$('#stats-content-1').html(html);
 
 	// let's add some waffles
-	$('#legend-content-2').html('');
+	$('#stats-content-2').html('');
 
 	// race waffle
 	var wafflevalues = {};
 	wafflevalues.title = 'Race';
 	wafflevalues.data = [mdbla.highlightedData._race_h,mdbla.highlightedData._race_b,mdbla.highlightedData._race_w,Number(mdbla.highlightedData._race_o2)]
 	wafflevalues.labels = ['Hispanic','Black','White','Other']
-	$('#legend-content-2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
+	$('#stats-content-2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
 
 	// gender waffle
 	var wafflevalues = {};
 	wafflevalues.title = 'Sex';
 	wafflevalues.data = [mdbla.highlightedData._sex_m,mdbla.highlightedData._sex_f]
 	wafflevalues.labels = ['Male','Female']
-	$('#legend-content-2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
+	$('#stats-content-2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
 
 	// charge waffle
 	var wafflevalues = {};
 	wafflevalues.title = 'Charge';
 	wafflevalues.data = [mdbla.highlightedData._charge_m,mdbla.highlightedData._charge_f,mdbla.highlightedData._charge_d,mdbla.highlightedData._charge_o]
 	wafflevalues.labels = ['Misdimeaner','Felony','D','O']
-	$('#legend-content-2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
+	$('#stats-content-2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
 
 }
 
@@ -485,7 +500,7 @@ mdbla.displayCharges = function()
 			}
 		})
 		html += '</table>';
-		$('#legend-content-4').html(html);
+		$('#stats-content-4').html(html);
 		
 	})
 
@@ -495,7 +510,7 @@ mdbla.displayCharges = function()
 mdbla.displayTimeline = function()
 {
 	// clear container
-	$('#legend-content-5').empty();
+	$('#stats-content-5').empty();
 
 	var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+mdbla.highlightedGeographyID+'\'';
 
@@ -504,11 +519,11 @@ mdbla.displayTimeline = function()
 
 		if(data.total_rows > 1000)
 		{
-			$('#legend-content-5').append('There are too many bookings for '+mdbla.highlightedGeographyName+' ('+data.total_rows+') to display on the time chart...')
+			$('#stats-content-5').append('There are too many bookings for '+mdbla.highlightedGeographyName+' ('+data.total_rows+') to display on the time chart...')
 		}
 		else
 		{
-			// $('#legend-content-5').append('Showing '+data.total_rows+' bookings:');
+			// $('#stats-content-5').append('Showing '+data.total_rows+' bookings:');
 			var timedata = [];
 			$.each(data.rows,function(i,val){
 				if(val._race_h == 1)
@@ -535,7 +550,7 @@ mdbla.displayTimeline = function()
 				}
 				timedata.push(thisItem)
 			})
-			var container = document.getElementById('legend-content-5');
+			var container = document.getElementById('stats-content-5');
 
 			// Create a DataSet (allows two way data-binding)
 			var items = new vis.DataSet(timedata);
@@ -566,7 +581,7 @@ mdbla.displayTimeline = function()
 mdbla.displayDaysInJailChart = function()
 {
 	// clear container
-	$('#legend-content-6').empty();
+	$('#stats-content-6').empty();
 
 	var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+mdbla.highlightedGeographyID+'\'';
 
@@ -581,14 +596,14 @@ mdbla.displayDaysInJailChart = function()
 
 		if(data.total_rows > 100)
 		{
-			$('#legend-content-6').append('Showing 100 out of '+data.total_rows+' total records')
+			$('#stats-content-6').append('Showing 100 out of '+data.total_rows+' total records')
 		}
 		else
 		{
-			$('#legend-content-6').append('Showing '+data.total_rows+' total records')
+			$('#stats-content-6').append('Showing '+data.total_rows+' total records')
 		}
 
-		$('#legend-content-6').append('<button type="button" class="btn btn-default btn-sm" id="stack-toggle">stack toggle</button>');
+		$('#stats-content-6').append('<button type="button" class="btn btn-default btn-sm" id="stack-toggle">stack toggle</button>');
 
 		$.each(data.rows,function(i,val){
 			if(i < 100)
@@ -644,7 +659,7 @@ mdbla.displayDaysInJailChart = function()
 				// add data to chart
 				if(val._jaildays > 0)
 				{
-					$('#legend-content-6').append('<div class="duration duration-container"><div class="duration-bar" data-toggle="tooltip" data-placement="top" title="'+ race + ' ' + sex + ' ' + val._jaildays+' days in prison for '+val.charge_des+'" style="float:left;width:'+barWidth+'px;background-color:'+className+'"></div><div class="duration-display">'+val._jaildays+'</div></div>')
+					$('#stats-content-6').append('<div class="duration duration-container"><div class="duration-bar" data-toggle="tooltip" data-placement="top" title="'+ race + ' ' + sex + ' ' + val._jaildays+' days in prison for '+val.charge_des+'" style="float:left;width:'+barWidth+'px;background-color:'+className+'"></div><div class="duration-display">'+val._jaildays+'</div></div>')
 				}
 				$('[data-toggle="tooltip"]').tooltip()
 				
@@ -723,7 +738,7 @@ mdbla.createWaffleChart = function(values)
 	})
 	waffle += '</div>';
 
-	// legend and values
+	// stats and values
 	waffle += '<table class="table table-condensed smallfont" style="text-align:left;">';
 
 	for (var i = 0; i < values.data.length; i++) {
@@ -797,7 +812,7 @@ mdbla.highlightPolygon = function(fips,zoomornot)
 */
 mdbla.waffle = function(val)
 {
-	var waffle = '<div class="legend-title">$'+mdbla.numberWithCommas(Math.round(val))+'</div>';
+	var waffle = '<div class="stats-title">$'+mdbla.numberWithCommas(Math.round(val))+'</div>';
 
 	var cells = Math.ceil(val/10000);
 	var cols = Math.ceil(cells/10);
