@@ -31,7 +31,8 @@
 		'Neighborhoods' : 'lasd_2010_2015_by_neighborhoods'
 	}
 	mdbla.cartoLayerMap = {
-		'BlockGroups' : 'https://mdbla.carto.com/api/v2/viz/7c32ed80-4eb6-11e6-a745-0e05a8b3e3d7/viz.json',
+		// 'BlockGroups' : 'https://mdbla.carto.com/api/v2/viz/7c32ed80-4eb6-11e6-a745-0e05a8b3e3d7/viz.json',
+		'BlockGroups' : 'https://mdbla.carto.com/api/v2/viz/e610732a-59ca-11e6-8760-0ecd1babdde5/viz.json',
 		'Neighborhoods' : 'https://mdbla.carto.com/api/v2/viz/6c2a7b6c-5459-11e6-a6cd-0e233c30368f/viz.json'
 	}
 
@@ -145,6 +146,7 @@ mdbla.clickFunctions = function()
 	$('#button-charges').click(function(){ mdbla.activeTab = 'charges'; mdbla.displayCharges() })
 	$('#button-timeline').click(function(){ mdbla.activeTab = 'timeline'; mdbla.displayTimeline() })
 	$('#button-daysinjail').click(function(){ mdbla.activeTab = 'daysinjail'; mdbla.displayDaysInJailChart() })
+	$('#button-rankings').click(function(){ mdbla.activeTab = 'rankings'; mdbla.displayRankings() })
 }
 
 /***
@@ -178,12 +180,12 @@ mdbla.toggleGeography = function()
 	mdbla.allowHover = true;
 
 	// reset the tabs
-	$('#stats-content-1').empty();
-	$('#stats-content-2').empty();
-	$('#stats-content-3').empty();
-	$('#stats-content-4').empty();
-	$('#stats-content-5').empty();
-	$('#stats-content-6').empty();
+	$('#stats-content-prison1').empty();
+	$('#stats-content-prison2').empty();
+	$('#stats-content-charges').empty();
+	$('#stats-content-timeline').empty();
+	$('#stats-content-daysinjail').empty();
+	$('#stats-content-rankings').empty();
 
 	if(mdbla.geography == 'Neighborhoods')
 	{
@@ -210,20 +212,20 @@ mdbla.toggleGeography = function()
 mdbla.cartoSQL = function(sql)
 {
 	// some summary stuff sql
-	var sql_statement1 = 'SELECT MAX(_jaildays) as jailmax,MIN(_jaildays) as jailmin,MAX(_bookings) as bookingsmax,MIN(_bookings) as bookingsmin,AVG(_jaildays) as "jailavg",AVG(_bookings) as "bookingsavg",AVG(_cost) as "cost" FROM '+mdbla.cartoLayerTable[mdbla.geography]+'';
+	var sql_statement1 = 'SELECT MAX(_jaildays) as jailmax,MIN(_jaildays) as jailmin,MAX(_bookings) as bookingsmax,MIN(_bookings) as bookingsmin,AVG(_jaildays) as "jailavg",AVG(_bookings) as "bookingsavg",MAX(_cost) as "costmax",MIN(_cost) as "costmin",AVG(_cost) as "costavg" FROM '+mdbla.cartoLayerTable[mdbla.geography]+'';
 
 	// main data sql
-	var sql_statement2 = 'SELECT name,fips,_bookings,_jaildays FROM '+mdbla.cartoLayerTable[mdbla.geography]+' ORDER BY _jaildays ';
+	var sql_statement2 = 'SELECT name,fips,_bookings,_jaildays,_cost FROM '+mdbla.cartoLayerTable[mdbla.geography]+' ORDER BY _jaildays ';
 
 	// get geojson for each polygon
 	// WARNING: may take time
 	var sql_statement3 = 'SELECT * FROM '+mdbla.cartoLayerTable[mdbla.geography];
-	
 
 	// go fetch 'em
 	if(mdbla.summary[mdbla.geography] == undefined)
 	{
 		var sql1 = $.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement1+'&api_key=701af57a932440fbe504882c6ccc8f6b3d83488f', function(data) {
+			console.log(data)
 			mdbla.summary[mdbla.geography] = data.rows[0];
 		});
 	}
@@ -290,12 +292,8 @@ mdbla.setMap = function()
 			mdbla.cartoSubLayer = layer.getSubLayer(0);
 
 			layer.on('featureClick',function(e, pos, latlng, data){
-
-				console.log('clicked on '+data.name)
 				// turn off the hovering and add a button to allow it back
 				mdbla.allowHover = false;
-				// $('#button-hover').show();
-				// $('#button-hover').html('Release '+data.name).click(function(){mdbla.allowHover = true; $('#button-hover').hide()})
 
 				// assign map actions
 				mdbla.mapAction(data);
@@ -354,6 +352,7 @@ mdbla.mapAction = function(data)
 		case 'charges' : mdbla.displayCharges(); break;
 		case 'timeline' : mdbla.displayTimeline(); break;
 		case 'daysinjail' : mdbla.displayDaysInJailChart(); break;
+		case 'rankings' : mdbla.displayRankings(); break;
 	}
 }
 
@@ -422,7 +421,7 @@ mdbla.displayPrisonData = function()
 
 	html += '</table>';
 
-	$('#stats-content-1').html(html);
+	$('#stats-content-prison1').html(html);
 
 	// let's add some waffles
 
@@ -454,31 +453,31 @@ mdbla.displayPrisonData = function()
 
 	// html += '</div>';
 
-	$('#stats-content-1').html(html);
+	$('#stats-content-prison1').html(html);
 
 	// let's add some waffles
-	$('#stats-content-2').html('');
+	$('#stats-content-prison2').html('');
 
 	// race waffle
 	var wafflevalues = {};
 	wafflevalues.title = 'Race';
 	wafflevalues.data = [mdbla.highlightedData._race_h,mdbla.highlightedData._race_b,mdbla.highlightedData._race_w,Number(mdbla.highlightedData._race_o2)]
 	wafflevalues.labels = ['Hispanic','Black','White','Other']
-	$('#stats-content-2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
+	$('#stats-content-prison2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
 
 	// gender waffle
 	var wafflevalues = {};
 	wafflevalues.title = 'Sex';
 	wafflevalues.data = [mdbla.highlightedData._sex_m,mdbla.highlightedData._sex_f]
 	wafflevalues.labels = ['Male','Female']
-	$('#stats-content-2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
+	$('#stats-content-prison2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
 
 	// charge waffle
 	var wafflevalues = {};
 	wafflevalues.title = 'Charge';
 	wafflevalues.data = [mdbla.highlightedData._charge_m,mdbla.highlightedData._charge_f,mdbla.highlightedData._charge_d,mdbla.highlightedData._charge_o]
 	wafflevalues.labels = ['Misdimeaner','Felony','D','O']
-	$('#stats-content-2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
+	$('#stats-content-prison2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
 
 }
 
@@ -500,7 +499,7 @@ mdbla.displayCharges = function()
 			}
 		})
 		html += '</table>';
-		$('#stats-content-4').html(html);
+		$('#stats-content-charges').html(html);
 		
 	})
 
@@ -510,7 +509,7 @@ mdbla.displayCharges = function()
 mdbla.displayTimeline = function()
 {
 	// clear container
-	$('#stats-content-5').empty();
+	$('#stats-content-timeline').empty();
 
 	var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+mdbla.highlightedGeographyID+'\'';
 
@@ -519,11 +518,11 @@ mdbla.displayTimeline = function()
 
 		if(data.total_rows > 1000)
 		{
-			$('#stats-content-5').append('There are too many bookings for '+mdbla.highlightedGeographyName+' ('+data.total_rows+') to display on the time chart...')
+			$('#stats-content-timeline').append('There are too many bookings for '+mdbla.highlightedGeographyName+' ('+data.total_rows+') to display on the time chart...')
 		}
 		else
 		{
-			// $('#stats-content-5').append('Showing '+data.total_rows+' bookings:');
+			// $('#stats-content-timeline').append('Showing '+data.total_rows+' bookings:');
 			var timedata = [];
 			$.each(data.rows,function(i,val){
 				if(val._race_h == 1)
@@ -550,7 +549,7 @@ mdbla.displayTimeline = function()
 				}
 				timedata.push(thisItem)
 			})
-			var container = document.getElementById('stats-content-5');
+			var container = document.getElementById('stats-content-timeline');
 
 			// Create a DataSet (allows two way data-binding)
 			var items = new vis.DataSet(timedata);
@@ -581,7 +580,7 @@ mdbla.displayTimeline = function()
 mdbla.displayDaysInJailChart = function()
 {
 	// clear container
-	$('#stats-content-6').empty();
+	$('#stats-content-daysinjail').empty();
 
 	var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+mdbla.highlightedGeographyID+'\'';
 
@@ -596,14 +595,14 @@ mdbla.displayDaysInJailChart = function()
 
 		if(data.total_rows > 100)
 		{
-			$('#stats-content-6').append('Showing 100 out of '+data.total_rows+' total records')
+			$('#stats-content-daysinjail').append('Showing 100 out of '+data.total_rows+' total records')
 		}
 		else
 		{
-			$('#stats-content-6').append('Showing '+data.total_rows+' total records')
+			$('#stats-content-daysinjail').append('Showing '+data.total_rows+' total records')
 		}
 
-		$('#stats-content-6').append('<button type="button" class="btn btn-default btn-sm" id="stack-toggle">stack toggle</button>');
+		$('#stats-content-daysinjail').append('<button type="button" class="btn btn-default btn-sm" id="stack-toggle">stack toggle</button>');
 
 		$.each(data.rows,function(i,val){
 			if(i < 100)
@@ -659,7 +658,7 @@ mdbla.displayDaysInJailChart = function()
 				// add data to chart
 				if(val._jaildays > 0)
 				{
-					$('#stats-content-6').append('<div class="duration duration-container"><div class="duration-bar" data-toggle="tooltip" data-placement="top" title="'+ race + ' ' + sex + ' ' + val._jaildays+' days in prison for '+val.charge_des+'" style="float:left;width:'+barWidth+'px;background-color:'+className+'"></div><div class="duration-display">'+val._jaildays+'</div></div>')
+					$('#stats-content-daysinjail').append('<div class="duration duration-container"><div class="duration-bar" data-toggle="tooltip" data-placement="top" title="'+ race + ' ' + sex + ' ' + val._jaildays+' days in prison for '+val.charge_des+'" style="float:left;width:'+barWidth+'px;background-color:'+className+'"></div><div class="duration-display">'+val._jaildays+'</div></div>')
 				}
 				$('[data-toggle="tooltip"]').tooltip()
 				
@@ -670,6 +669,76 @@ mdbla.displayDaysInJailChart = function()
 		})
 	});
 
+}
+
+mdbla.displayRankings = function()
+{
+	console.log('display rankings...')
+	// clear container
+	$('#stats-content-rankings').empty();
+	$('#stats-content-rankings').html('<div id="rankings-container"><table class="table table-hover table-condensed"><thead><th class="sort" data-sort="name">name</th><th class="sort" data-sort="cost">cost</th><th class="sort" data-sort="arrests">arrests</th><th class="sort" data-sort="jaildays">days in jail</th></thead><tbody id="ranking-list" class="list"></tbody></table></div>');
+
+	var options = {
+		valueNames: [ 
+			'name',
+			'costdisplay',
+			'arrestsdisplay',
+			'jaildaysdisplay',
+			{data:['cost']},
+			{data:['arrests']},
+			{data:['jaildays']},
+		]
+	};
+
+	$.each(mdbla.data[mdbla.geography].rows,function(i,val){
+
+		var cost = Math.round(val._cost);
+		var arrests = Math.round(val._bookings);
+		var jaildays = Math.round(val._jaildays);
+
+		var costdisplay = '$'+mdbla.numberWithCommas(Math.round(val._cost));
+		var arrestsdisplay = mdbla.numberWithCommas(Math.round(val._bookings));
+		var jaildaysdisplay = mdbla.numberWithCommas(Math.round(val._jaildays));
+
+		var costwidth = Math.round(cost/mdbla.summary[mdbla.geography]["costmax"]*100);
+		var arrestswidth = Math.round(arrests/mdbla.summary[mdbla.geography]["bookingsmax"]*100);
+		var jaildayswidth = Math.round(jaildays/mdbla.summary[mdbla.geography]["jailmax"]*100);
+
+		$('#ranking-list').append('<tr id="ranking-'+val.fips+'" onmouse data-cost='+cost+' data-arrests='+val._bookings+' data-jaildays='+val._jaildays+'><td class="name">'+val.name+'</td><td class="cost"><div style="background-color:skyblue;width:'+costwidth+'%">'+costdisplay+'</div></td><td class="arrests"><div style="background-color:skyblue;width:'+arrestswidth+'%">'+arrestsdisplay+'</div></td><td class="jaildays"><div style="background-color:skyblue;width:'+jaildayswidth+'%">'+jaildaysdisplay+'</div></td></tr>');
+
+		$('#ranking-'+val.fips).mouseover(function(event) {
+			// mdbla.highlightPolygon(val.fips);
+			// let's change the cursor cuz that hand is too vague
+			$('#map').css('cursor', 'pointer');
+
+			// only refresh the data if we hover over a new feature
+			if(mdbla.highlightedGeographyID != val.fips && mdbla.allowHover)
+			{
+				// assign map actions
+				// mdbla.mapAction(val);
+
+				// highlight the polygon
+				mdbla.highlightPolygon(val.fips,false);
+			}
+		});
+		$('#ranking-'+val.fips).click(function(event) {
+			// mdbla.highlightPolygon(val.fips,true);
+			// turn off the hovering and add a button to allow it back
+			mdbla.allowHover = false;
+
+			// assign map actions
+			// mdbla.mapAction(val);
+
+			// create bookmark
+			mdbla.createBookmark();
+
+			// highlight the polygon
+			mdbla.highlightPolygon(val.fips,true);
+
+		});
+	})
+
+	var userList = new List('rankings-container', options);
 }
 
 /***
@@ -768,7 +837,7 @@ mdbla.highlightPolygon = function(fips,zoomornot)
 
 	mdbla.highlightedPolygonStyle = {
 		weight: 3,
-		color: '#1F78B4',
+		color: 'yellow',
 		opacity: 1,
 		fillColor: '#FFFFFF',
 		fillOpacity: 0,
