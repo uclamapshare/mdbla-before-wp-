@@ -48,7 +48,7 @@ mdbla.displayPrisonData = function()
 
 	// gender waffle
 	var wafflevalues = {};
-	wafflevalues.title = 'Sex';
+	wafflevalues.title = 'Gender';
 	wafflevalues.data = [mdbla.highlightedData._sex_m,mdbla.highlightedData._sex_f]
 	wafflevalues.labels = ['Male','Female']
 	$('#stats-content-prison2').append('<div class="col-md-4">'+mdbla.createWaffleChart(wafflevalues)+'</div>');
@@ -64,7 +64,7 @@ mdbla.displayPrisonData = function()
 
 mdbla.displayCharges = function()
 {
-	var sql_statement1 = 'SELECT charge_des,count(*) as "count" FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+ mdbla.highlightedGeographyID +'\' GROUP BY charge_des ORDER BY count DESC';
+	var sql_statement1 = 'SELECT charge_des,count(*) as "count" FROM lasd_2010_2015_bookings2 WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+ mdbla.highlightedGeographyID +'\' GROUP BY charge_des ORDER BY count DESC';
 	var html = '';
 	// display charges
 	var sql = $.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement1+'&api_key='+mdbla.cartoKey, function(data) {
@@ -92,7 +92,7 @@ mdbla.displayTimeline = function()
 	// clear container
 	$('#stats-content-timeline').empty();
 
-	var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+mdbla.highlightedGeographyID+'\'';
+	var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings2 WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+mdbla.highlightedGeographyID+'\'';
 
 	// display timeline and days in jail chart
 	$.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement2+'&api_key='+mdbla.cartoKey, function(data) {
@@ -163,7 +163,7 @@ mdbla.displayDaysInJailChart = function()
 	// clear container
 	$('#stats-content-daysinjail').empty();
 
-	var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+mdbla.highlightedGeographyID+'\'';
+	var sql_statement2 = 'SELECT arrest_date,_race_b,_race_h,_race_w,_sex_m,_sex_f,occupation,_jaildays,charge_des FROM lasd_2010_2015_bookings2 WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' = \''+mdbla.highlightedGeographyID+'\'';
 
 	// display timeline and days in jail chart
 	$.getJSON('https://mdbla.carto.com/api/v2/sql/?q='+sql_statement2+'&api_key='+mdbla.cartoKey, function(data) {
@@ -254,6 +254,7 @@ mdbla.displayDaysInJailChart = function()
 
 mdbla.displayRankings = function()
 {
+	console.log('displaying rankings...')
 	// clear container
 	$('#stats-content-rankings').empty();
 
@@ -334,7 +335,7 @@ mdbla.displayRankings = function()
 
 			$('#map').css('cursor', 'pointer');
 
-			mdbla.highlightRanking(val.fips);
+			// mdbla.highlightRanking(val.fips);
 			// only refresh the data if we hover over a new feature
 			if(mdbla.highlightedGeographyID != val.fips && mdbla.allowHover)
 			{

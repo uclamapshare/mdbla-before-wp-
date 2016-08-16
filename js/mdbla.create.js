@@ -1,4 +1,3 @@
-
 /***
 
 	Create bookmarks
@@ -30,6 +29,7 @@ mdbla.createBookmark = function()
 			mdbla.highlightPolygon(thisID,true);
 			mdbla.highlightedData = thisData;
 			mdbla.mapAction(thisData);
+			mdbla.scrollToRanking(thisID);
 		})
 
 		// allow user to delete the bookmark

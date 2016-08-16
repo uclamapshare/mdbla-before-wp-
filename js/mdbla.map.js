@@ -33,6 +33,8 @@ mdbla.setMap = function()
 				// highlight the polygon
 				mdbla.highlightPolygon(data.fips,true);
 
+				mdbla.scrollToRanking(data.fips);
+
 			})
 			.on('featureOver', function(e, latlng, pos, data) 
 			{
@@ -76,19 +78,31 @@ mdbla.mapAction = function(data)
 	$('#display-geography-title').html(html);
 
 	// process data for active tab only
+	// tabs with switches here enables the data to be refreshed as user hovers over map (data intensive)
+	// keeping "rankings" out of this functionality
 	switch (mdbla.activeTab)
 	{
 		case 'prison': mdbla.displayPrisonData(); break;
 		case 'charges' : mdbla.displayCharges(); break;
 		case 'timeline' : mdbla.displayTimeline(); break;
 		case 'daysinjail' : mdbla.displayDaysInJailChart(); break;
-		case 'rankings' : mdbla.displayRankings(); break;
+		// case 'rankings' : mdbla.displayRankings(); break;
 	}
 }
 
 mdbla.highlightRanking = function(fips)
 {
+	console.log('highlighting ranking row '+fips)
 	$('#ranking-'+fips).css('background-color','yellow')
+	if(mdbla.highlightedRanking) mdbla.highlightedRanking.css('background-color','white');
+	mdbla.highlightedRanking = $('#ranking-'+fips);
+}
+
+mdbla.scrollToRanking = function(fips)
+{
+	$('#rankings').animate({
+		scrollTop: $('#ranking-'+fips).offset().top - $('#rankings').offset().top + $('#rankings').scrollTop()
+	});
 }
 
 mdbla.highlightPolygon = function(fips,zoomornot)

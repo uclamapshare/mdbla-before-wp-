@@ -1,0 +1,998 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"scroll",
+				"scrollToRanking"
+			],
+			[
+				"this",
+				"thisrowhtml"
+			],
+			[
+				"html",
+				"htmltableheader"
+			],
+			[
+				"high",
+				"highlight"
+			],
+			[
+				"carto",
+				"cartoKey"
+			],
+			[
+				"jailday",
+				"jaildaysdisplay"
+			],
+			[
+				"arre",
+				"arrestsdisplay"
+			],
+			[
+				"sub",
+				"subtractamount"
+			],
+			[
+				"disp",
+				"display-geography"
+			],
+			[
+				"index",
+				"indexOf"
+			],
+			[
+				"mar",
+				"margin-bottom"
+			],
+			[
+				"peop",
+				"peoplepericon"
+			],
+			[
+				"peo",
+				"peopleicon"
+			],
+			[
+				"book",
+				"bookmarks"
+			],
+			[
+				"text",
+				"text-align"
+			],
+			[
+				"display",
+				"display-bookmarks"
+			],
+			[
+				"legen",
+				"legend-title"
+			],
+			[
+				"hi",
+				"highlightedData"
+			],
+			[
+				"hig",
+				"highlightedPolygon"
+			],
+			[
+				"create",
+				"createGeographyButton"
+			],
+			[
+				"labe",
+				"labelLayer"
+			],
+			[
+				"zoom",
+				"zoomornot"
+			],
+			[
+				"data",
+				"dataWindowWidth"
+			],
+			[
+				"total",
+				"total_rows"
+			],
+			[
+				"tota",
+				"total_rows"
+			],
+			[
+				"h",
+				"highlightedData"
+			],
+			[
+				"days",
+				"daysinjail"
+			],
+			[
+				"dis",
+				"displayPrisonData"
+			],
+			[
+				"acti",
+				"activeTab"
+			],
+			[
+				"cart",
+				"cartoLayerMap"
+			],
+			[
+				"_s",
+				"_sex_m"
+			],
+			[
+				"waff",
+				"waffle-box"
+			],
+			[
+				"waffle",
+				"waffle-border"
+			],
+			[
+				"adju",
+				"adjustMapSize"
+			],
+			[
+				"duration",
+				"duration-container"
+			],
+			[
+				"stack",
+				"stack-toggle"
+			],
+			[
+				"pad",
+				"padding-top"
+			],
+			[
+				"jaild",
+				"_jaildays"
+			],
+			[
+				"clas",
+				"className"
+			],
+			[
+				"jail",
+				"jailtimedata"
+			],
+			[
+				"min",
+				"min-width"
+			],
+			[
+				"ex",
+				"expandLegend"
+			],
+			[
+				"lege",
+				"legendWidth"
+			],
+			[
+				"allo",
+				"allowHover"
+			],
+			[
+				"time",
+				"timedata"
+			],
+			[
+				"crea",
+				"createTimeline"
+			],
+			[
+				"feat",
+				"featureClick"
+			],
+			[
+				"H",
+				"HIGHLIGHT_STYLE"
+			],
+			[
+				"sq",
+				"sql_statement1"
+			],
+			[
+				"inde",
+				"indexOf"
+			],
+			[
+				"background",
+				"background-color"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"_co",
+				"_cost_of_incarceration"
+			],
+			[
+				"sql",
+				"sql_statement"
+			],
+			[
+				"for",
+				"for	for (…) {…}"
+			],
+			[
+				"chan",
+				"changeLayer"
+			],
+			[
+				"slid",
+				"slider-value"
+			],
+			[
+				"bef",
+				"beforeorafter"
+			],
+			[
+				"im",
+				"imageTitles"
+			],
+			[
+				"image",
+				"imageURLs"
+			],
+			[
+				"ch",
+				"changeOverlay"
+			],
+			[
+				"ima",
+				"imageURLs"
+			],
+			[
+				"Sta",
+				"Stamen_Watercolor"
+			],
+			[
+				"padd",
+				"padding-left"
+			],
+			[
+				"rg",
+				"rgba()"
+			],
+			[
+				"REASON_DESCRIPTION",
+				"REASON_DESCRIPTIONS	statement"
+			],
+			[
+				"EY",
+				"EYES_COLORS	statement"
+			],
+			[
+				"ey",
+				"EYES_COLORS	statement"
+			],
+			[
+				"D",
+				"DATE_OF_BIRTHS	statement"
+			],
+			[
+				"DA",
+				"DATE_OF_BIRTHS	statement"
+			],
+			[
+				"ra",
+				"RACES	statement"
+			],
+			[
+				"IN",
+				"INMATE_NAMES	statement"
+			],
+			[
+				"I",
+				"INMATE_NAME"
+			],
+			[
+				"HOME",
+				"HOME_ADDRESS"
+			],
+			[
+				"BOOKING",
+				"BOOKING_NUMBER"
+			],
+			[
+				"inm",
+				"INMATE_NAMES	statement"
+			],
+			[
+				"INM",
+				"INMATE_NAMES	statement"
+			],
+			[
+				"rele",
+				"release_dates	statement"
+			],
+			[
+				"outpu",
+				"output_file_headers	statement"
+			],
+			[
+				"ma",
+				"map2use"
+			],
+			[
+				"json",
+				"jsongeocode	statement"
+			],
+			[
+				"loc",
+				"location	statement"
+			],
+			[
+				"L",
+				"LATITUDE"
+			],
+			[
+				"hom",
+				"home_address	statement"
+			],
+			[
+				"home",
+				"home_addresses	statement"
+			],
+			[
+				"rel",
+				"release_date	statement"
+			],
+			[
+				"booking",
+				"booking_numbers	statement"
+			],
+			[
+				"te",
+				"textarea	Tag"
+			],
+			[
+				"la",
+				"labellayer2"
+			],
+			[
+				"lih",
+				"lihtc13"
+			],
+			[
+				"liht",
+				"lihtc00"
+			],
+			[
+				"hc",
+				"hcv_rept13"
+			],
+			[
+				"hcv",
+				"hcv_rept00"
+			],
+			[
+				"RB",
+				"RB_chg_00_13"
+			],
+			[
+				"MG",
+				"MGR_chg_00_13"
+			],
+			[
+				"MH",
+				"MHI_chg_00_13"
+			],
+			[
+				"MHI",
+				"MHI_chg_90_00"
+			],
+			[
+				"user",
+				"user_mentions	statement"
+			],
+			[
+				"ment",
+				"mention_target"
+			],
+			[
+				"j",
+				"j_usermentions	statement"
+			],
+			[
+				"meta",
+				"metajson	statement"
+			],
+			[
+				"loa",
+				"loads	function"
+			],
+			[
+				"val",
+				"valign"
+			],
+			[
+				"ready",
+				"ready	document.ready - $(function(){})"
+			],
+			[
+				"get",
+				"getTwitPic"
+			],
+			[
+				"clea",
+				"cleanword	statement"
+			],
+			[
+				"Majority",
+				"Majority1990"
+			],
+			[
+				"tweet",
+				"tweet_id"
+			],
+			[
+				"twe",
+				"tweet_id"
+			],
+			[
+				"cir",
+				"circleToCluster"
+			],
+			[
+				"ce",
+				"centralMap"
+			],
+			[
+				"sc",
+				"screen_name"
+			],
+			[
+				"s",
+				"screen_name"
+			],
+			[
+				"subl",
+				"sublayer"
+			],
+			[
+				"F1",
+				"F1Ocean"
+			],
+			[
+				"search",
+				"search-text"
+			],
+			[
+				"fr",
+				"friends"
+			],
+			[
+				"dra",
+				"drawVisualization"
+			],
+			[
+				"tw",
+				"twittersna"
+			],
+			[
+				"timeba",
+				"timebarcontainer"
+			],
+			[
+				"cle",
+				"clearData"
+			],
+			[
+				"photo",
+				"photo-container"
+			],
+			[
+				"max",
+				"max-height"
+			],
+			[
+				"lat",
+				"latimes"
+			],
+			[
+				"font",
+				"font-size"
+			],
+			[
+				"api",
+				"apiurl"
+			],
+			[
+				"timeb",
+				"timebaritems"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "w",
+		"selected_items":
+		[
+			[
+				"w",
+				"Word Wrap: Toggle"
+			],
+			[
+				"ssh",
+				"Set Syntax: HTML"
+			],
+			[
+				"sssq",
+				"Set Syntax: SQL"
+			],
+			[
+				"ss js",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"ssphp",
+				"Set Syntax: PHP"
+			],
+			[
+				"ssjson",
+				"Set Syntax: JSON"
+			],
+			[
+				"sshtml",
+				"Set Syntax: HTML"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"ssj",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"sscss",
+				"Set Syntax: CSS"
+			],
+			[
+				"ssht",
+				"Set Syntax: HTML (Tcl)"
+			],
+			[
+				"sscs",
+				"Set Syntax: CSS"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"ssja",
+				"Set Syntax: Java"
+			]
+		],
+		"width": 467.0
+	},
+	"console":
+	{
+		"height": 167.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/index.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/mdbla.sublime-project",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/mdbla.config.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/mdbla.map.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/mdbla.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/mdbla.init.js",
+		"/Volumes/inetpub/sandbox/bishamon/index.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/mdbla.display.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/mdbla.create.js",
+		"/Volumes/inetpub/sandbox/bishamon/bishamon/index.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/css/style.css",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/globals.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/list.min.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/index2.html",
+		"/Users/yohman/Desktop/temp.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/mdbla.min.js",
+		"/Users/yohman/Downloads/temp.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/mdbla (yohman@gmail.com 2).js",
+		"/Users/yohman/Documents/Box Sync/htdocs/test.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/css/vis.css",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla/js/vis.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla2/css/style.css",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla2/index.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla2/js/mdbla.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/mdbla2/waffle/index.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/mapbox/index.html",
+		"/Volumes/ETC/Projects/_MDBLA/Original Data/LAPD Inmate Data 20160614/csv/test.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/mapbox/story.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/mapbox/mapboxgl.html",
+		"/Volumes/ETC/Projects/_MDBLA/Original Data/LAPD Inmate Data 20160614/csv/LAPD_2013.csv",
+		"/Volumes/ETC/Projects/_MDBLA/Original Data/LAPD Inmate Data 20160614/csv/LAPD_2012.csv",
+		"/Volumes/ETC/Projects/_MDBLA/Original Data/LAPD Inmate Data 20160614/csv/LAPD_2010.csv",
+		"/Volumes/ETC/Projects/_MDBLA/Original Data/LAPD Inmate Data 20160614/test.csv",
+		"/Volumes/ETC/Projects/_MDBLA/Original Data/LAPD Inmate Data 20160614/HERNANDEZ 2010 ARRESTS.csv",
+		"/Volumes/ETC/Projects/_MDBLA/Original Data/LAPD Inmate Data 20160614/LAPD_2011.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/css/style.css",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/js/jquery.beforeafter-map-0.11.js",
+		"/Volumes/ETC/Projects/_MDBLA/Original Data/LAPD Inmate Data 20160614/HERNANDEZ 2011 ARRESTS.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/index.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/js/settings.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/js/beforeafter.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/UD/index.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/UD/js/ud.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/image.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/css/leaflet.awesome-markers.css",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/js/leaflet.awesome-markers.min.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/js/jquery.ui.touch-punch.min.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/css/leaflet.css",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/js/jquery-ui-1.10.3.custom.min.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/js/jquery-1.10.2.min.js",
+		"/Users/yohman/Documents/Box Sync/htdocs/beforeafter/js/leaflet.js",
+		"/Users/yohman/Documents/Box Sync/Projects/CartoDB Workshop/LA Times Photo Archive.csv",
+		"/Volumes/wwwroot/archive/HyperZombie/maplibrary.html",
+		"/Users/yohman/Documents/Box Sync/LASD BOOKING LOGS 2010 to present/geocoded/pop_count_rate.csv",
+		"/Users/yohman/Documents/Box Sync/LASD BOOKING LOGS 2010 to present/python/parse.py",
+		"/Users/yohman/Documents/Box Sync/LASD BOOKING LOGS 2010 to present/csv extracts/Booking Logs_040110 to 043010.htm.csv",
+		"/Users/yohman/Documents/Box Sync/LASD BOOKING LOGS 2010 to present/test/Booking Logs_010110 to 013110.htm",
+		"/Users/yohman/Documents/Box Sync/LASD BOOKING LOGS 2010 to present/geocoded/geocoded1.csv",
+		"/Users/yohman/Documents/Box Sync/LASD BOOKING LOGS 2010 to present/python/geocode.py",
+		"/Users/yohman/Documents/Box Sync/LASD BOOKING LOGS 2010 to present/python/parse_folder.py",
+		"/Users/yohman/Documents/Box Sync/LASD BOOKING LOGS 2010 to present/csv extracts/test.csv",
+		"/Users/yohman/Documents/Box Sync/LASD BOOKING LOGS 2010 to present/csv extracts/BookingLogs2010_2015.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/html/Booking Logs_010110 to 013110.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/csv/Booking Logs_010110 to 013110.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/html/Booking Logs_020110 to 022810.min.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/html/Booking Logs_010110 to 013110.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/sql/lamdb.sql",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/sql/sql.py",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/html/Booking Logs_010110 to 013110.min.htm",
+		"/Users/yohman/Downloads/notmagic.json",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/html/Booking Logs_010114 to 013114.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/html/Booking Logs_010114 to 013114.min.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/python/bookinglogs_010115_063015.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/html/Booking Logs_010115_063015.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/geocode.py",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/bookinglogs1.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/test.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/geocoded.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/test.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/bookinglogs_2015_07_12_3.min.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/bookinglogs_2015_07_12_3.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/bookinglogs_2015_07_12.min.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/bookinglogs_2015_07_12.htm",
+		"/Users/yohman/Documents/Box Sync/SW 259/311 Python/tweet3.py",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/test.min.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/parse.html",
+		"/Users/yohman/Documents/Box Sync/SW 259/311 Python/anpi.py",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/Booking Logs_070115_123115.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/LASD Booking Log  01-04-16.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/bookinglogs_2015_07_12_2.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/lamdb/bookinglogs_2015_07_12_1.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/latimes/data/latimes2.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/latimes/index.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/latimes/js/latimes.js",
+		"/Users/yohman/Documents/Box Sync/LASD Inmate Release Data/csv/PRA request JAN 1 through JAN 31 2016-1.csv",
+		"/Users/yohman/Documents/Box Sync/LASD BOOKING LOGS 2010 to present/LASD Booking Logs 2016/LASD booking logs (january 2016)/parse/LASD Booking Log  01-04-16.htm",
+		"/Users/yohman/Documents/Box Sync/htdocs/UD/js/L.Map.Sync.js",
+		"/Users/yohman/Documents/Box Sync/LASD Inmate Release Data/test2.csv",
+		"/Users/yohman/Documents/Box Sync/LASD Inmate Release Data/test.csv",
+		"/Users/yohman/Documents/Box Sync/LASD Inmate Release Data/test4.csv",
+		"/Users/yohman/Documents/Box Sync/PhD/bishamon/kml/FacesOfFukushima.kml",
+		"/Users/yohman/Documents/Box Sync/SW 259/311 Python/user_mentions.csv",
+		"/Users/yohman/Documents/Box Sync/SW 259/311 Python/user_hashtag.py",
+		"/Users/yohman/Documents/Box Sync/SW 259/311 Python/user_hashtag.csv",
+		"/Users/yohman/Documents/Box Sync/SW 259/Final3/hashtags/user_hashtags.csv",
+		"/Users/yohman/Documents/Box Sync/SW 259/311 Python/tweet2.py",
+		"/Users/yohman/Documents/Box Sync/htdocs/sna/story.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/sna/juststory.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/sna/raw.html",
+		"/Users/yohman/Downloads/hashtags.py",
+		"/Users/yohman/Documents/Box Sync/htdocs/sna/getTwitterPic.html",
+		"/Users/yohman/Documents/Box Sync/htdocs/sna/css/story.css",
+		"/Users/yohman/Documents/Box Sync/htdocs/bishamon/js/Bishamon.GridLayer.js",
+		"/Users/yohman/Downloads/ooe_san.csv",
+		"/Users/yohman/Downloads/311_first5mins.csv",
+		"/Users/yohman/Downloads/311_first30mins.csv",
+		"/Users/yohman/Downloads/311_first60mins_nodes_only.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/sna/index.html",
+		"/Users/yohman/Documents/Box Sync/SW 259/Final3/Rankings/Top Tweeters.csv",
+		"/Users/yohman/Downloads/anpi.py",
+		"/Users/yohman/Documents/Box Sync/SW 259/Final3/SQL Table Outputs/syuu1228.csv",
+		"/Users/yohman/Documents/Box Sync/SW 259/Final3/SQL Table Outputs/syuu1228_first_hour_tweets.csv",
+		"/Users/yohman/Documents/Box Sync/fukushima/training/F1 Trainer.csv",
+		"/Users/yohman/Library/Application Support/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+		"/Users/yohman/Downloads/retweets.csv",
+		"/Users/yohman/Downloads/directed_12_13.csv",
+		"/Users/yohman/Documents/Box Sync/SW 259/Final2/Rankings/yuu.csv",
+		"/Users/yohman/Documents/Box Sync/htdocs/php.php"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 99.0,
+		"where_history":
+		[
+			"<open files>",
+			"<current file>",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"highlightRanking",
+			"sex",
+			"-container",
+			"rankings-container",
+			"myContainer",
+			"activetab",
+			"mapbox",
+			"'",
+			"cost",
+			"stats-content-prison1",
+			"bookings",
+			"jailranks",
+			"console",
+			"console.log",
+			"fff",
+			"mdbla.mapAction",
+			"jaildays",
+			"jaildaysdisplay",
+			"arrestsdisplay",
+			"pop2010display",
+			"htmltableheader",
+			");",
+			"$('#ranking-list').append('",
+			");",
+			"$('#stats-content-rankings').append(",
+			"	$('#",
+			"arrests",
+			"_pop",
+			"cost",
+			"jaildays",
+			"pop",
+			"2010",
+			"highlightPolygon",
+			"mdbla.data",
+			"createRankings",
+			"sandbox.idre.ucla.edu",
+			"geography-ti",
+			"console",
+			"createRankings",
+			"mapb",
+			"address",
+			"701af57a932440fbe504882c6ccc8f6b3d83488f",
+			"jailranks",
+			"bookingsranks",
+			"statsWidth",
+			"ranki",
+			"= 0 ",
+			"_ = 0,",
+			"_ =",
+			"0\n",
+			"number\n",
+			"number_\n",
+			"cost",
+			"mapAction",
+			"mdbla.summary",
+			"daysinjail",
+			"DaysInJail",
+			"daysinjail",
+			"data",
+			"highlightPolygon",
+			"cost",
+			"arrests",
+			"li",
+			"p",
+			"h3",
+			"year",
+			"gainsboro",
+			"td",
+			"}\n",
+			"daysinjail",
+			"  ",
+			"stats-content-6",
+			"stats-content-5",
+			"stats-content-4",
+			"#stats-content-3",
+			"stats-content-2",
+			"stats-content-1",
+			"stats-content-",
+			"empty",
+			"setMap",
+			"cartoSQL",
+			"+",
+			"-$",
+			"main-menu",
+			"allowHover",
+			"mdbla.highlightedGeographyID",
+			"createBookmark",
+			"#",
+			"div",
+			"legend",
+			"Legend",
+			"legend",
+			"allowHover",
+			"mdbla.bookmarks",
+			"display-geography",
+			"mdbla.geojson",
+			"mdbla.data",
+			"undefi",
+			"mdbla.summary",
+			"Block Groups",
+			"mdbla.summary",
+			"getJSON",
+			"sql1",
+			"toggleHover",
+			"https://cdn4.iconfinder.com/data/icons/ionicons/512/",
+			"incarnation",
+			"danger",
+			"md-4\"",
+			"setMap",
+			"md-4\"",
+			"contain",
+			"var ht",
+			");",
+			"md-4",
+			"5]",
+			"legend-title",
+			"legend",
+			"highlightedData",
+			".click",
+			"highlightPolygon",
+			"highlightedPolygon",
+			"createBookmark",
+			"highlightPolygon",
+			"createBookmark",
+			"createGeographyBookmark",
+			"createGeographyButton",
+			"showing",
+			"layercart"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"mdbla.",
+			",",
+			"      <table class=\"record\" border=1 width=95% bgcolor=\"lightblue\">\n	    <tr>\n	      <td class=\"booking\">",
+			"<td class=\"booking\">Booking No.:",
+			"<td>Booking Loc:",
+			"<td class=\"booking\">Booking",
+			"<scale>1.5</scale>",
+			"width=\"120\" ",
+			"','",
+			"body"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "mdbla.sublime-project",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 179.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

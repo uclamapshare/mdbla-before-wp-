@@ -23,6 +23,7 @@
 	mdbla.highlightedData;
 	mdbla.highlightedGeographyID;
 	mdbla.highlightedGeographyName;
+	mdble.highlightedRanking;
 
 /*
 
