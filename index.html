@@ -31,7 +31,7 @@
 		<!-- map  -->
 		<div class="col-xs-6">
 			<div id="map-buttons">
-				<!-- Geo toggle -->
+				<!-- Geo toggle 
 				<div class="btn-group">
 					<button type="button" class="btn btn-default" id="display-geography">Neighborhoods</button>
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -41,6 +41,19 @@
 					<ul class="dropdown-menu">
 						<li><a href="#" id="button-neighborhoods">Neighborhoods</a></li>
 						<li><a href="#" id="button-blockgroups">Block Groups</a></li>
+					</ul>
+				</div>-->
+
+				<div class="btn-group">
+					<button type="button" class="btn btn-default" id="display-geography">LASD</button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span class="caret"></span>
+						<span class="sr-only">Toggle Dropdown</span>
+					</button>
+					<ul class="dropdown-menu">
+						<li><a href="#" id="button-LASD">LASD</a></li>
+						<li><a href="#" id="button-LAPD">LAPD</a></li>
+						<li><a href="#" id="button-COMBINED">LASD + LAPD</a></li>
 					</ul>
 				</div>
 			</div>
@@ -138,7 +151,7 @@
 
 	<!-- mdbla javascript -->
 	<script src="js/mdbla.config.js"></script>
-	<script src="js/mdbla.init.js"></script>
+	<script src="js/mdbla.query.js"></script>
 	<script src="js/mdbla.map.js"></script>
 	<script src="js/mdbla.create.js"></script>
 	<script src="js/mdbla.display.js"></script>

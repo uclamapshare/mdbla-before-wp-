@@ -31,9 +31,9 @@ mdbla.setMap = function()
 				mdbla.createBookmark();
 
 				// highlight the polygon
-				mdbla.highlightPolygon(data.fips,true);
+				mdbla.highlightPolygon(data[mdbla.geographyIDColumn[mdbla.geography]],true);
 
-				mdbla.scrollToRanking(data.fips);
+				mdbla.scrollToRanking(data[mdbla.geographyIDColumn[mdbla.geography]]);
 
 			})
 			.on('featureOver', function(e, latlng, pos, data) 
@@ -42,13 +42,13 @@ mdbla.setMap = function()
 				$('#map').css('cursor', 'pointer');
 
 				// only refresh the data if we hover over a new feature
-				if(mdbla.highlightedGeographyID != data.fips && mdbla.allowHover)
+				if(mdbla.highlightedGeographyID != data[mdbla.geographyIDColumn[mdbla.geography]] && mdbla.allowHover)
 				{
 					// assign map actions
 					mdbla.mapAction(data);
 
 					// highlight the polygon
-					mdbla.highlightPolygon(data.fips,false);
+					mdbla.highlightPolygon(data[mdbla.geographyIDColumn[mdbla.geography]],false);
 				}
 			})
 			.on('load',function(){
@@ -70,11 +70,15 @@ mdbla.mapAction = function(data)
 
 	// let the app know what happened
 	mdbla.highlightedData = data;
-	mdbla.highlightedGeographyID = data.fips;
+	mdbla.highlightedGeographyID = data[mdbla.geographyIDColumn[mdbla.geography]];
 	mdbla.highlightedGeographyName = data.name;
 
 	// populate the title box
-	var html = '<div><span class="stats-title">'+mdbla.highlightedGeographyName+'</span><br>2010 population: '+mdbla.numberWithCommas(data.pop2010)+'</div>';
+	var percentPop = Math.round(data.pop2010/mdbla.summary[mdbla.geography].pop2010sum*100);
+	var percentBooked = Math.round(data._bookings/mdbla.summary[mdbla.geography].bookingssum*100);
+	var percentCost = Math.round(data._cost/mdbla.summary[mdbla.geography].costsum*100);
+	var html = '<div class="stats-title">'+mdbla.highlightedGeographyName+'</div><div class="well"><span class="stats-number">'+percentPop+'%</span> of Los Angeles County population, <span class="stats-number">'+percentBooked+'%</span> of all jail bookings and <span class="stats-number">'+percentCost+'%</span> of total costs</div>';
+
 	$('#display-geography-title').html(html);
 
 	// process data for active tab only
@@ -90,25 +94,25 @@ mdbla.mapAction = function(data)
 	}
 }
 
-mdbla.highlightRanking = function(fips)
+mdbla.highlightRanking = function(id)
 {
-	console.log('highlighting ranking row '+fips)
-	$('#ranking-'+fips).css('background-color','yellow')
+	console.log('highlighting ranking row '+id)
+	$('#ranking-'+id).css('background-color','yellow')
 	if(mdbla.highlightedRanking) mdbla.highlightedRanking.css('background-color','white');
-	mdbla.highlightedRanking = $('#ranking-'+fips);
+	mdbla.highlightedRanking = $('#ranking-'+id);
 }
 
-mdbla.scrollToRanking = function(fips)
+mdbla.scrollToRanking = function(id)
 {
 	$('#rankings').animate({
-		scrollTop: $('#ranking-'+fips).offset().top - $('#rankings').offset().top + $('#rankings').scrollTop()
+		scrollTop: $('#ranking-'+id).offset().top - $('#rankings').offset().top + $('#rankings').scrollTop()
 	});
 }
 
-mdbla.highlightPolygon = function(fips,zoomornot)
+mdbla.highlightPolygon = function(id,zoomornot)
 {
-
-	if(mdbla.activeTab == 'rankings') mdbla.highlightRanking(fips);
+	console.log('higlighting '+id)
+	if(mdbla.activeTab == 'rankings') mdbla.highlightRanking(id);
 
 	mdbla.highlightedPolygonStyle = {
 		weight: 3,
@@ -137,7 +141,7 @@ mdbla.highlightPolygon = function(fips,zoomornot)
 	}
 
 	$.each(mdbla.geojson[mdbla.geography],function(i,val){
-		if(val.properties.fips == fips)
+		if(val.properties[mdbla.geographyIDColumn[mdbla.geography]] == id)
 		{
 			thisGeoJSON = val
 		}

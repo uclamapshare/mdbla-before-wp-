@@ -52,13 +52,14 @@
 	Map related settings
 
 */
-	mdbla.geography = 'Neighborhoods';
+	mdbla.geography = 'LASDNeighborhoods';
+	mdbla.department = 'LASD';
 	mdbla.map;
 	mdbla.layerCarto;
 	mdbla.cartoSubLayer;
 	mdbla.geographyIDColumn = {
 		'BlockGroups' : 'fips_1',
-		'Neighborhoods' : 'slug'
+		'LASDNeighborhoods' : 'slug'
 	}
 
 /*
@@ -69,13 +70,13 @@
 	mdbla.cartoKey = '701af57a932440fbe504882c6ccc8f6b3d83488f';
 	mdbla.cartoLayerTable = {
 		'BlockGroups' : 'lasd_2010_2015_by_block_group',
-		'Neighborhoods' : 'lasd_2010_2015_by_neighborhoods_merge'
+		'LASDNeighborhoods' : 'lasd_2010_2015_by_neighborhoods_merge'
 	}
 	mdbla.cartoLayerMap = {
-		// 'BlockGroups' : 'https://mdbla.carto.com/api/v2/viz/7c32ed80-4eb6-11e6-a745-0e05a8b3e3d7/viz.json',
 		'BlockGroups' : 'https://mdbla.carto.com/api/v2/viz/e610732a-59ca-11e6-8760-0ecd1babdde5/viz.json',
-		// 'Neighborhoods' : 'https://mdbla.carto.com/api/v2/viz/6c2a7b6c-5459-11e6-a6cd-0e233c30368f/viz.json'
-		'Neighborhoods' : 'https://mdbla.carto.com/api/v2/viz/95917d26-5b65-11e6-b8d9-0e233c30368f/viz.json'
+		'LASDNeighborhoods' : 'https://mdbla.carto.com/api/v2/viz/95917d26-5b65-11e6-b8d9-0e233c30368f/viz.json',
+		'LAPDNeighborhoods' : 'https://mdbla.carto.com/api/v2/viz/21c7ebb4-659c-11e6-b830-0e3ff518bd15/viz.json',
+
 	}
 
 	// mapbox token
@@ -121,6 +122,7 @@ mdbla.resize = function()
 ***/
 $( function() 
 {
+	console.log('init')
 	// adjust windows
 	mdbla.resize()
 
@@ -170,6 +172,11 @@ mdbla.clickFunctions = function()
 {
 	$('#button-neighborhoods').click(function(){ mdbla.toggleGeography() })
 	$('#button-blockgroups').click(function(){ mdbla.toggleGeography() })
+	
+	$('#button-LASD').click(function(){ mdbla.toggleGeography('LASDNeighborhoods') })
+	$('#button-LAPD').click(function(){ mdbla.toggleGeography('LAPDNeighborhoods') })
+	$('#button-COMBINED').click(function(){ mdbla.toggleGeography() })
+
 	$('#button-prison').click(function(){ mdbla.activeTab = 'prison'; mdbla.displayPrisonData() })
 	$('#button-charges').click(function(){ mdbla.activeTab = 'charges'; mdbla.displayCharges() })
 	$('#button-timeline').click(function(){ mdbla.activeTab = 'timeline'; mdbla.displayTimeline() })
@@ -183,8 +190,11 @@ mdbla.clickFunctions = function()
 	Neighborhoods or Census BlockGroups
 
 ***/
-mdbla.toggleGeography = function()
+mdbla.toggleGeography = function(geography)
 {
+	console.log('toggling...')
+	mdbla.geography = geography;
+
 	// reset the map
 	mdbla.cartoSubLayer.hide()
 
@@ -212,15 +222,13 @@ mdbla.toggleGeography = function()
 	$('#stats-content-daysinjail').empty();
 	$('#stats-content-rankings').empty();
 
-	if(mdbla.geography == 'Neighborhoods')
+	if(mdbla.geography == 'LASDNeighborhoods')
 	{
-		mdbla.geography = 'BlockGroups';
-		$('#display-geography').html('Block Groups');
+		$('#display-geography').html('LASDNeighborhoods');
 	}
-	else
+	else if (mdbla.geography == 'LAPDNeighborhoods')
 	{
-		mdbla.geography = 'Neighborhoods';
-		$('#display-geography').html('Neighborhoods');
+		$('#display-geography').html('LAPDNeighborhoods');
 	}
 
 	// add the layer control back to the map
@@ -329,7 +337,7 @@ mdbla.setMap = function()
 				mdbla.createBookmark();
 
 				// highlight the polygon
-				mdbla.highlightPolygon(data.fips,true);
+				mdbla.highlightPolygon(data[mdbla.geographyIDColumn[mdbla.geography]],true);
 
 			})
 			.on('featureOver', function(e, latlng, pos, data) 
@@ -338,13 +346,13 @@ mdbla.setMap = function()
 				$('#map').css('cursor', 'pointer');
 
 				// only refresh the data if we hover over a new feature
-				if(mdbla.highlightedGeographyID != data.fips && mdbla.allowHover)
+				if(mdbla.highlightedGeographyID != data[mdbla.geographyIDColumn[mdbla.geography]] && mdbla.allowHover)
 				{
 					// assign map actions
 					mdbla.mapAction(data);
 
 					// highlight the polygon
-					mdbla.highlightPolygon(data.fips,false);
+					mdbla.highlightPolygon(data[mdbla.geographyIDColumn[mdbla.geography]],false);
 				}
 			})
 			.on('load',function(){
@@ -366,7 +374,7 @@ mdbla.mapAction = function(data)
 
 	// let the app know what happened
 	mdbla.highlightedData = data;
-	mdbla.highlightedGeographyID = data.fips;
+	mdbla.highlightedGeographyID = data[mdbla.geographyIDColumn[mdbla.geography]];
 	mdbla.highlightedGeographyName = data.name;
 
 	var html = '<div><span class="stats-title">'+mdbla.highlightedGeographyName+'</span><br>2010 population: '+mdbla.numberWithCommas(data.pop2010)+'</div>';

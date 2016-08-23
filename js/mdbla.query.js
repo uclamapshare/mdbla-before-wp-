@@ -64,72 +64,6 @@ $( function()
 
 /***
 
-	Assign buttons to perform various functions
-
-***/
-mdbla.clickFunctions = function()
-{
-	$('#button-neighborhoods').click(function(){ mdbla.toggleGeography() })
-	$('#button-blockgroups').click(function(){ mdbla.toggleGeography() })
-	$('#button-prison').click(function(){ mdbla.activeTab = 'prison'; mdbla.displayPrisonData() })
-	$('#button-charges').click(function(){ mdbla.activeTab = 'charges'; mdbla.displayCharges() })
-	$('#button-timeline').click(function(){ mdbla.activeTab = 'timeline'; mdbla.displayTimeline() })
-	$('#button-daysinjail').click(function(){ mdbla.activeTab = 'daysinjail'; mdbla.displayDaysInJailChart() })
-	$('#button-rankings').click(function(){ mdbla.activeTab = 'rankings'; mdbla.displayRankings() })
-}
-
-/***
-
-	Allow toggling of main geography
-	Neighborhoods or Census BlockGroups
-
-***/
-mdbla.toggleGeography = function()
-{
-	// reset the map
-	mdbla.cartoSubLayer.hide()
-
-	// remove highlighted polygon
-	if(mdbla.highlightedPolygon) {mdbla.map.removeLayer(mdbla.highlightedPolygon)};
-
-	// get rid of any open tooltip windows and statss
-	$('.cartodb-tooltip').hide();
-
-	//clear title
-	$('#display-geography-title').html('...loading...');
-
-	// clear bookmarks
-	$('#display-bookmarks').empty();
-	mdbla.bookmarks.length = 0;
-
-
-	mdbla.allowHover = true;
-
-	// reset the tabs
-	$('#stats-content-prison1').empty();
-	$('#stats-content-prison2').empty();
-	$('#stats-content-charges').empty();
-	$('#stats-content-timeline').empty();
-	$('#stats-content-daysinjail').empty();
-	$('#stats-content-rankings').empty();
-
-	if(mdbla.geography == 'Neighborhoods')
-	{
-		mdbla.geography = 'BlockGroups';
-		$('#display-geography').html('Block Groups');
-	}
-	else
-	{
-		mdbla.geography = 'Neighborhoods';
-		$('#display-geography').html('Neighborhoods');
-	}
-
-	// add the layer control back to the map
-	mdbla.cartoSQL();
-}
-
-/***
-
 	Booking data is stored in CartoDB. 
 	These SQL calls pull the data into
 	the application
@@ -138,11 +72,11 @@ mdbla.toggleGeography = function()
 mdbla.cartoSQL = function(sql)
 {
 	// some summary stuff sql
-	var sql_statement1 = 'SELECT MAX(_jaildays) as jailmax,MIN(_jaildays) as jailmin,MAX(_bookings) as bookingsmax,MIN(_bookings) as bookingsmin,AVG(_jaildays) as "jailavg",AVG(_bookings) as "bookingsavg",MAX(_cost) as "costmax",MIN(_cost) as "costmin",AVG(_cost) as "costavg",MAX(pop2010) as "pop2010max",MIN(pop2010) as "pop2010min",AVG(pop2010) as "pop2010avg" FROM '+mdbla.cartoLayerTable[mdbla.geography]+'';
+	var sql_statement1 = 'SELECT MAX(_jaildays) as jailmax,MIN(_jaildays) as jailmin,SUM(_jaildays) as jailsum,MAX(_bookings) as bookingsmax,MIN(_bookings) as bookingsmin,AVG(_jaildays) as "jailavg",AVG(_bookings) as "bookingsavg",SUM(_bookings) as "bookingssum",MAX(_cost) as "costmax",MIN(_cost) as "costmin",AVG(_cost) as "costavg",SUM(_cost) as "costsum",MAX(pop2010) as "pop2010max",MIN(pop2010) as "pop2010min",AVG(pop2010) as "pop2010avg",SUM(pop2010) as "pop2010sum" FROM '+mdbla.cartoLayerTable[mdbla.geography]+'';
 
 	// main data sql
 	// var sql_statement2 = 'SELECT name,fips,_bookings,_jaildays,_cost FROM '+mdbla.cartoLayerTable[mdbla.geography]+' ORDER BY _cost DESC ';
-	var sql_statement2 = 'SELECT * FROM '+mdbla.cartoLayerTable[mdbla.geography]+' WHERE fips is not null ORDER BY _cost DESC';
+	var sql_statement2 = 'SELECT * FROM '+mdbla.cartoLayerTable[mdbla.geography]+' WHERE '+mdbla.geographyIDColumn[mdbla.geography]+' is not null ORDER BY _cost DESC';
 
 	// get geojson for each polygon
 	// WARNING: may take time
@@ -191,6 +125,87 @@ mdbla.cartoSQL = function(sql)
 	}
 }
 
+/***
+
+	Assign buttons to perform various functions
+
+***/
+mdbla.clickFunctions = function()
+{
+	$('#button-neighborhoods').click(function(){ mdbla.toggleGeography() })
+	$('#button-blockgroups').click(function(){ mdbla.toggleGeography() })
+
+	$('#button-LASD').click(function(){ mdbla.toggleGeography('LASDNeighborhoods') })
+	$('#button-LAPD').click(function(){ mdbla.toggleGeography('LAPDNeighborhoods') })
+
+	$('#button-prison').click(function(){ mdbla.activeTab = 'prison'; mdbla.displayPrisonData() })
+	$('#button-charges').click(function(){ mdbla.activeTab = 'charges'; mdbla.displayCharges() })
+	$('#button-timeline').click(function(){ mdbla.activeTab = 'timeline'; mdbla.displayTimeline() })
+	$('#button-daysinjail').click(function(){ mdbla.activeTab = 'daysinjail'; mdbla.displayDaysInJailChart() })
+	$('#button-rankings').click(function(){ mdbla.activeTab = 'rankings'; mdbla.displayRankings() })
+}
+
+/***
+
+	Allow toggling of main geography
+	Neighborhoods or Census BlockGroups
+
+***/
+mdbla.toggleGeography = function(geography)
+{
+	console.log('toggling...')
+	mdbla.geography = geography;
+
+	// reset the map
+	mdbla.cartoSubLayer.hide()
+
+	// remove highlighted polygon
+	if(mdbla.highlightedPolygon) {mdbla.map.removeLayer(mdbla.highlightedPolygon)};
+
+	// get rid of any open tooltip windows and statss
+	$('.cartodb-tooltip').hide();
+
+	//clear title
+	$('#display-geography-title').html('...loading...');
+
+	// clear bookmarks
+	$('#display-bookmarks').empty();
+	mdbla.bookmarks.length = 0;
+
+
+	mdbla.allowHover = true;
+
+	// reset the tabs
+	$('#stats-content-prison1').empty();
+	$('#stats-content-prison2').empty();
+	$('#stats-content-charges').empty();
+	$('#stats-content-timeline').empty();
+	$('#stats-content-daysinjail').empty();
+	$('#stats-content-rankings').empty();
+
+	// if(mdbla.geography == 'Neighborhoods')
+	// {
+	// 	mdbla.geography = 'BlockGroups';
+	// 	$('#display-geography').html('Block Groups');
+	// }
+	// else
+	// {
+	// 	mdbla.geography = 'Neighborhoods';
+	// 	$('#display-geography').html('Neighborhoods');
+	// }
+
+	if(mdbla.geography == 'LASDNeighborhoods')
+	{
+		$('#display-geography').html('LASDNeighborhoods');
+	}
+	else if (mdbla.geography == 'LAPDNeighborhoods')
+	{
+		$('#display-geography').html('LAPDNeighborhoods');
+	}
+
+	// add the layer control back to the map
+	mdbla.cartoSQL();
+}
 
 /*
 	Depracated waffle function

@@ -10,10 +10,10 @@ mdbla.displayPrisonData = function()
 	var costranking = mdbla.costranks[fipsposition];
 
 	// Cost of incarceration
-	var html = '<div class="col-md-6" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="stats-title" style="color:'+mdbla.colorPallete[4]+'">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</span><br>Cost of incarceration ('+costranking+' out of '+mdbla.costranks.length+')</div>';
+	var html = '<div class="col-md-4" style="text-align:center;"><span class="stats-title" style="color:'+mdbla.colorPallete[4]+'">$'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._cost))+'</span><br>Cost of incarceration</div>';
 	
 	// Days in Jail
-	html += '<div class="col-md-6" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="stats-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._jaildays))+'</span><br>Days in jail ('+jailranking+' out of '+mdbla.jailranks.length+')</div>';
+	html += '<div class="col-md-4" style="text-align:center;"><span class="stats-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._jaildays))+'</span><br>Days in jail</div>';
 
 	// Number of arrests
 	var peopleicon = '<img src="img/icon-man-16.png">';
@@ -30,7 +30,10 @@ mdbla.displayPrisonData = function()
 	for (var i = 0; i < Math.round(mdbla.highlightedData._bookings/peoplepericon); i++) {
 		peopleicons += peopleicon;
 	}
-	html += '<div class="col-md-12" style="border-top:1px solid gainsboro;border-bottom:1px solid gainsboro;text-align:center;"><span class="stats-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._bookings))+'</span><br>('+peopleicon+' = '+peoplepericon+' arrests)<div style="padding:4px;">'+peopleicons+'</div>Number of arrests ('+bookingsranking+' out of '+mdbla.bookingsranks.length+')</div>';
+	// has people icons
+	// html += '<div class="col-md-4" style="text-align:center;"><span class="stats-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._bookings))+'</span><br>('+peopleicon+' = '+peoplepericon+' arrests)<div style="padding:4px;">'+peopleicons+'</div>Number of arrests ('+bookingsranking+' out of '+mdbla.bookingsranks.length+')</div>';
+	// no people icons
+	html += '<div class="col-md-4" style="text-align:center;"><span class="stats-title" style="color:'+mdbla.colorPallete[4]+'">'+mdbla.numberWithCommas(Math.round(mdbla.highlightedData._bookings))+'</span><br>Number of arrests</div>';
 
 	// html += '</div>';
 
@@ -335,7 +338,6 @@ mdbla.displayRankings = function()
 
 			$('#map').css('cursor', 'pointer');
 
-			// mdbla.highlightRanking(val.fips);
 			// only refresh the data if we hover over a new feature
 			if(mdbla.highlightedGeographyID != val.fips && mdbla.allowHover)
 			{
